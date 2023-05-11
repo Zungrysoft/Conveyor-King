@@ -32,13 +32,33 @@ export const data = {
         // Crate
         {
             type: 'crate',
-            position: [1, 0, 2],
+            position: [1, 0, 3],
             letter: 'a',
         },
         {
-            type: 'crate',
+            type: 'fan',
             position: [1, 0, 1],
+            color: 'orange',
+            angle: 3,
+        },
+        {
+            type: 'crate',
+            position: [1, 0, 2],
             letter: 'd',
+        },
+
+        // Laser
+        {
+            type: 'rotator',
+            position: [0, 3, 0],
+            color: 'white',
+            rotateDirection: 'cw',
+        },
+        {
+            type: 'laser',
+            position: [0, 3, 1],
+            color: 'white',
+            angle: 2,
         },
     ],
 }

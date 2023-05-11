@@ -412,18 +412,19 @@ export default class Board extends Thing {
         else {
           anim.rotation = vec2.lerpAngles(anim.rotation, anim.endRotation, ROTATE_LINEAR_SPEED/dist)
         }
-      }
 
-      // Object rotating
-      if (anim.moveType === 'rotateShrink') {
+        // Object rotating
         // Scale element down so its rotation doesn't cause it to intersect with adjacent tiles
         const angleScale = Math.max(Math.abs(Math.cos(anim.rotation + Math.PI/4)), Math.abs(Math.sin(anim.rotation + Math.PI/4)))
         const scale = (1/angleScale) * 0.7071
-        anim.scale = scale
+        let heightAdjust = (2*anim.stackHeight)
+        if (anim.moveType === 'rotateShrink') {
+          anim.scale = scale
+          heightAdjust ++
+        }
 
-        // Move the element downward to counteract the shrink
+        // Move the element downward to counteract rotateShrink shrinking
         anim.position = [...anim.endPosition]
-        const heightAdjust = 1 + (2*anim.stackHeight)
         anim.position[2] -= ((1-scale)/2) * heightAdjust
       }
 
@@ -774,8 +775,13 @@ export default class Board extends Thing {
     // Perform the rotation and animation
     this.rotatorRotateElement(position, rotateDirection, stackHeight)
 
+    // Track stack height
+    if (this.mustShrinkWhenRotating(this.state.elements[index].type)) {
+      stackHeight ++
+    }
+
     // Since this element was rotated, try to rotate the element on top of it
-    this.rotatorRotate(vec3.add(position, [0, 0, 1]), rotateDirection, stackHeight + 1)
+    this.rotatorRotate(vec3.add(position, [0, 0, 1]), rotateDirection, stackHeight)
 
     // Return result to previous element
     return true
