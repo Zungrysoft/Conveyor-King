@@ -311,7 +311,7 @@ export default class Board extends Thing {
       laserLength: 0,
       rotation: 0,
       endRotation: 0,
-      stackHeight: 0,
+      shrinkHeight: 0,
     }})
   }
 
@@ -417,7 +417,7 @@ export default class Board extends Thing {
         // Scale element down so its rotation doesn't cause it to intersect with adjacent tiles
         const angleScale = Math.max(Math.abs(Math.cos(anim.rotation + Math.PI/4)), Math.abs(Math.sin(anim.rotation + Math.PI/4)))
         const scale = (1/angleScale) * 0.7071
-        let heightAdjust = (2*anim.stackHeight)
+        let heightAdjust = (2*anim.shrinkHeight)
         if (anim.moveType === 'rotateShrink') {
           anim.scale = scale
           heightAdjust ++
@@ -457,15 +457,15 @@ export default class Board extends Thing {
   }
 
   moveable(type) {
-    return type === 'crate' || type === 'fan' || type === 'laser'
+    return ['crate', 'fan', 'laser'].includes(type)
   }
 
   pushable(type) {
-    return type === 'crate' || type === 'fan' || type === 'laser'
+    return ['crate', 'fan', 'laser'].includes(type)
   }
 
   mustShrinkWhenRotating(type) {
-    return type === 'crate'
+    return ['crate', 'conveyor', 'chute', 'block'].includes(type)
   }
 
   angleToRotation(angle) {
@@ -732,8 +732,13 @@ export default class Board extends Thing {
     }
   }
 
-  rotatorRotateElement(position, rotateDirection, stackHeight) {
+  rotatorRotateElement(position, rotateDirection, shrinkHeight) {
     const index = this.getElementAt(position)
+
+    // Don't rotate air
+    if (index === -1) {
+      return
+    }
 
     // Rotate it
     let angle = this.state.elements[index].angle || 0
@@ -757,31 +762,32 @@ export default class Board extends Thing {
     this.animState[index].endRotation = this.angleToRotation(newAngle)
     this.animState[index].position = this.state.elements[index].position
     this.animState[index].endPosition = this.state.elements[index].position
-    this.animState[index].stackHeight = stackHeight
+    this.animState[index].shrinkHeight = shrinkHeight
   }
 
-  rotatorRotate(position, rotateDirection, stackHeight) {
+  rotatorRotate(position, rotateDirection, shrinkHeight, height) {
     const index = this.getElementAt(position)
 
     // Base case: this is air
     if (index === -1) {
       return false
     }
-    // Base case: element is not pushable
-    if (!this.pushable(this.state.elements[index].type)) {
+    // Base case: element is not moveable
+    // Ignore this base case if height <= 1 since the rotator can always rotate itself and the element on top of it
+    if (!this.moveable(this.state.elements[index].type) && height > 1) {
       return false
     }
 
     // Perform the rotation and animation
-    this.rotatorRotateElement(position, rotateDirection, stackHeight)
+    this.rotatorRotateElement(position, rotateDirection, shrinkHeight)
 
     // Track stack height
     if (this.mustShrinkWhenRotating(this.state.elements[index].type)) {
-      stackHeight ++
+      shrinkHeight ++
     }
 
     // Since this element was rotated, try to rotate the element on top of it
-    this.rotatorRotate(vec3.add(position, [0, 0, 1]), rotateDirection, stackHeight)
+    this.rotatorRotate(vec3.add(position, [0, 0, 1]), rotateDirection, shrinkHeight, height + 1)
 
     // Return result to previous element
     return true
@@ -797,16 +803,12 @@ export default class Board extends Thing {
       // If this is a fan of the right color and angle...
       if (element.type === 'rotator' && element.color === color && !element.destroyed) {
         let pos = [...element.position]
-        let pos2 = vec3.add(pos, [0, 0, 1])
 
-        // Rotate elements above this
-        let result = this.rotatorRotate(pos2, element.rotateDirection, 0)
+        // Rotate everything
+        let result = this.rotatorRotate(pos, element.rotateDirection, 0, 0)
         if (result === true) {
           didRotateSomething = true
         }
-
-        // Rotate this rotator as well
-        this.rotatorRotateElement(pos, element.rotateDirection, 0)
       }
     }
 

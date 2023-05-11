@@ -9,6 +9,22 @@ export const data = {
         // Rotator
         {
             type: 'rotator',
+            position: [-2, 0, 0],
+            color: 'green',
+            rotateDirection: 'ccw',
+        },
+        {
+            type: 'block',
+            position: [-2, 0, 1],
+        },
+        {
+            type: 'block',
+            position: [-2, 0, 2],
+        },
+
+        // Rotator
+        {
+            type: 'rotator',
             position: [0, 0, 0],
             color: 'blue',
             rotateDirection: 'cw',
@@ -51,13 +67,13 @@ export const data = {
         {
             type: 'rotator',
             position: [0, 3, 0],
-            color: 'white',
+            color: 'red',
             rotateDirection: 'cw',
         },
         {
             type: 'laser',
             position: [0, 3, 1],
-            color: 'white',
+            color: 'red',
             angle: 2,
         },
     ],
