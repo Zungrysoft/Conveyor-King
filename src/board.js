@@ -470,7 +470,7 @@ export default class Board extends Thing {
   }
 
   mustShrinkWhenRotating(type) {
-    return ['crate', 'conveyor', 'chute', 'block'].includes(type)
+    return !(['rotator', 'fan', 'laser'].includes(type))
   }
 
   angleToRotation(angle) {
