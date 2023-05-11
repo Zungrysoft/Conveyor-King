@@ -17,18 +17,39 @@ export const data = {
             type: 'conveyor',
             position: [-2, 0, 1],
             color: 'yellow',
+            scaffold: true,
+        },
+        {
+            type: 'conveyor',
+            position: [-2, -1, 1],
+            color: 'yellow',
+            scaffold: true,
+        },
+        {
+            type: 'conveyor',
+            position: [-2, -2, 1],
+            color: 'yellow',
+            scaffold: true,
+        },
+        {
+            type: 'scaffold',
+            position: [-2, -1, 0],
+        },
+        {
+            type: 'scaffold',
+            position: [-2, -2, 0],
         },
         {
             type: 'crate',
-            position: [-2, 0, 2],
+            position: [-2, -2, 2],
         },
         {
             type: 'crate',
-            position: [-2, 0, 3],
+            position: [-2, -2, 3],
         },
         {
             type: 'crate',
-            position: [-2, 0, 4],
+            position: [-2, -2, 4],
         },
 
         // Rotator

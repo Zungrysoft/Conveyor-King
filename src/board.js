@@ -1259,6 +1259,21 @@ export default class Board extends Thing {
       gfx.drawMesh(assets.meshes.conveyorBelt)
     }
 
+    // If this is a conveyor, render the scaffold as well
+    if (elementState.type === 'conveyor' && elementState.scaffold) {
+      gfx.setShader(rShader)
+      game.getCamera3D().setUniforms()
+      gfx.set('color', [1, 1, 1, 1])
+      gfx.set('scroll', 0)
+      gfx.setTexture(assets.textures.uv_conveyorScaffold)
+      gfx.set('modelMatrix', mat.getTransformation({
+        translation: rPos,
+        rotation: [Math.PI/2, 0, rAngle],
+        scale: rScale
+      }))
+      gfx.drawMesh(assets.meshes.conveyorScaffold)
+    }
+
     // If this is a laser, render the beam as well
     if (elementState.type === 'laser') {
       let offset = vec2.rotate(0, animState.laserLength/2, rAngle)
