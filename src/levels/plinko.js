@@ -12,28 +12,24 @@ export const data = {
             position: [4, 4, 10],
             angle: 2,
             color: 'red',
-            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [4, 3, 10],
             angle: 2,
             color: 'red',
-            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [4, 2, 10],
             angle: 2,
             color: 'red',
-            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [4, 1, 10],
             angle: 2,
             color: 'red',
-            scaffold: true,
         },
         {
             type: 'conveyor',
@@ -163,28 +159,24 @@ export const data = {
             position: [0, 0, 4],
             angle: 1,
             color: 'red',
-            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [1, 0, 4],
             angle: 1,
             color: 'red',
-            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [2, 0, 4],
             angle: 1,
             color: 'red',
-            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [3, 0, 4],
             angle: 1,
             color: 'red',
-            scaffold: true,
         },
 
         // Chutes

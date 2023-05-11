@@ -86,6 +86,7 @@ export const data = {
             position: [1, 0, 1],
             color: 'orange',
             angle: 3,
+            scaffold: true,
         },
         {
             type: 'crate',

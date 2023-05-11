@@ -62,6 +62,7 @@ await game.loadAssets({
     conveyorScaffold: 'models/conveyor_scaffold.obj',
     scaffold: 'models/scaffold.obj',
     laser: 'models/laser.obj',
+    laserScaffold: 'models/laser_scaffold.obj',
     rotator: 'models/rotator.obj',
     rotatorArrows: 'models/rotator_arrows.obj',
   }
