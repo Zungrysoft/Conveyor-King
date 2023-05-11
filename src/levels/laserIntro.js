@@ -12,24 +12,28 @@ export const data = {
             position: [2, 0, 1],
             color: 'red',
             angle: 1,
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [3, 0, 1],
             color: 'red',
             angle: 1,
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [4, 0, 1],
             color: 'red',
             angle: 1,
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [5, 0, 1],
             color: 'red',
             angle: 1,
+            scaffold: true,
         },
 
         // Chute
@@ -49,6 +53,26 @@ export const data = {
         // Platform
         {
             type: 'block',
+            position: [1, 0, 0],
+        },
+        {
+            type: 'block',
+            position: [2, 0, 0],
+        },
+        {
+            type: 'block',
+            position: [3, 0, 0],
+        },
+        {
+            type: 'block',
+            position: [4, 0, 0],
+        },
+        {
+            type: 'block',
+            position: [5, 0, 0],
+        },
+        {
+            type: 'block',
             position: [1, 1, 0],
         },
         {
@@ -62,6 +86,10 @@ export const data = {
         {
             type: 'block',
             position: [4, 1, 0],
+        },
+        {
+            type: 'block',
+            position: [5, 1, 0],
         },
         {
             type: 'block',
@@ -79,6 +107,10 @@ export const data = {
             type: 'block',
             position: [4, 2, 0],
         },
+        {
+            type: 'block',
+            position: [5, 2, 0],
+        },
 
         // Laser
         {
@@ -93,6 +125,12 @@ export const data = {
         },
 
         // Blocker Conveyor
+        {
+            type: 'conveyor',
+            position: [0, 0, 0],
+            color: 'blue',
+            angle: 2,
+        },
         {
             type: 'conveyor',
             position: [0, 1, 0],
@@ -143,22 +181,22 @@ export const data = {
         // Fans
         {
             type: 'block',
-            position: [-1, 1, 0],
+            position: [-2, 1, 0],
         },
         {
             type: 'block',
-            position: [-1, 2, 0],
+            position: [-2, 2, 0],
         },
         {
             type: 'fan',
-            position: [-1, 1, 1],
+            position: [-2, 1, 1],
             color: 'green',
             angle: 1,
 
         },
         {
             type: 'fan',
-            position: [-1, 2, 1],
+            position: [-2, 2, 1],
             color: 'green',
             angle: 1,
         },

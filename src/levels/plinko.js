@@ -12,30 +12,35 @@ export const data = {
             position: [4, 4, 10],
             angle: 2,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [4, 3, 10],
             angle: 2,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [4, 2, 10],
             angle: 2,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [4, 1, 10],
             angle: 2,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [4, 0, 10],
             angle: 3,
             color: 'red',
+            scaffold: true,
         },
 
         // Crates
@@ -71,24 +76,28 @@ export const data = {
             position: [0, 0, 10],
             angle: 3,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [1, 0, 10],
             angle: 3,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [2, 0, 10],
             angle: 3,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [3, 0, 10],
             angle: 3,
             color: 'red',
+            scaffold: true,
         },
 
         {
@@ -96,24 +105,28 @@ export const data = {
             position: [0, 0, 8],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [1, 0, 8],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [2, 0, 8],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [3, 0, 8],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
 
         {
@@ -121,24 +134,28 @@ export const data = {
             position: [0, 0, 6],
             angle: 3,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [1, 0, 6],
             angle: 3,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [2, 0, 6],
             angle: 3,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [3, 0, 6],
             angle: 3,
             color: 'red',
+            scaffold: true,
         },
 
         {
@@ -146,24 +163,28 @@ export const data = {
             position: [0, 0, 4],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [1, 0, 4],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [2, 0, 4],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [3, 0, 4],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
 
         // Chutes

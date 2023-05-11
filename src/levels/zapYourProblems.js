@@ -12,24 +12,28 @@ export const data = {
             position: [0, 0, 0],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [1, 0, 0],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [2, 0, 0],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'conveyor',
             position: [3, 0, 0],
             angle: 1,
             color: 'red',
+            scaffold: true,
         },
         {
             type: 'block',
@@ -250,6 +254,28 @@ export const data = {
             position: [8, 0, -1],
             angle: 3,
             color: 'green',
+        },
+
+        // Deco scaffolding
+        {
+            type: 'scaffold',
+            position: [0, 0, -1],
+            angle: 1,
+        },
+        {
+            type: 'scaffold',
+            position: [1, 0, -1],
+            angle: 1,
+        },
+        {
+            type: 'scaffold',
+            position: [1, 0, -2],
+            angle: 1,
+        },
+        {
+            type: 'scaffold',
+            position: [1, 0, -3],
+            angle: 1,
         },
     ],
 }

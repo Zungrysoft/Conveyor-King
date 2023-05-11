@@ -17,7 +17,6 @@ export function getLevel(lvl) {
   // Retrieve level data
   const levelList = [
     rotatorTest,
-    intro,
     fanIntro,
     stacking,
     fanPushesFan,
