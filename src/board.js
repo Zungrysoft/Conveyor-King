@@ -762,7 +762,8 @@ export default class Board extends Thing {
     }
 
     // Animation
-    this.animState[index].moveType = this.mustShrinkWhenRotating(this.state.elements[index].type) ? 'rotateShrink' : 'rotate'
+    const shrink = this.mustShrinkWhenRotating(this.state.elements[index].type) || this.state.elements[index].scaffold
+    this.animState[index].moveType = shrink ? 'rotateShrink' : 'rotate'
     this.animState[index].rotation = this.angleToRotation(angle)
     this.animState[index].endRotation = this.angleToRotation(newAngle)
     this.animState[index].position = this.state.elements[index].position
@@ -787,7 +788,8 @@ export default class Board extends Thing {
     this.rotatorRotateElement(position, rotateDirection, shrinkHeight)
 
     // Track stack height
-    if (this.mustShrinkWhenRotating(this.state.elements[index].type)) {
+    const shrink = this.mustShrinkWhenRotating(this.state.elements[index].type) || this.state.elements[index].scaffold
+    if (shrink) {
       shrinkHeight ++
     }
 
