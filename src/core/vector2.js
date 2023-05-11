@@ -82,6 +82,59 @@ export function angleToVector (angle, length = 1) {
   return [Math.cos(angle) * length, Math.sin(angle) * length]
 }
 
+export function angleDistance(a, b) {
+  // Bind angles to be from 0 to 2*PI
+  a = a % (Math.PI*2)
+  b = b % (Math.PI*2)
+
+  // Find the shortest distance
+  let minDist = Math.abs(a - b)
+
+  const d1 = Math.abs((a + (Math.PI*2)) - b)
+  if (d1 < minDist) {
+    minDist = d1
+  }
+
+  const d2 = Math.abs((a - (Math.PI*2)) - b)
+  if (d2 < minDist) {
+    minDist = d2
+  }
+
+  return minDist
+}
+
+export function lerpAngles(a, b, t) {
+  // Bind angles to be from 0 to 2*PI
+  a = a % (Math.PI*2)
+  b = b % (Math.PI*2)
+
+  // Determine which direction to lerp yaw in
+  let minMode = 0
+  let minDist = Math.abs(a - b)
+
+  const d1 = Math.abs((a + (Math.PI*2)) - b)
+  if (d1 < minDist) {
+    minDist = d1
+    minMode = 1
+  }
+
+  const d2 = Math.abs((a - (Math.PI*2)) - b)
+  if (d2 < minDist) {
+    minDist = d2
+    minMode = 2
+  }
+
+  // Apply mode
+  if (minMode === 1) {
+    a += Math.PI*2
+  }
+  else if (minMode === 2) {
+    a -= Math.PI*2
+  }
+
+  return (1 - t) * a + t * b
+}
+
 /*
    given two objects of format
    {

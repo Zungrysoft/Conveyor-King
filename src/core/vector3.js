@@ -1,3 +1,5 @@
+import * as vec2 from './vector2.js'
+
 export function equals (a, b) {
   return a[0] === b[0] && a[1] === b[1] && a[2] === b[2]
 }
@@ -111,6 +113,13 @@ export function vectorToAngles (vector) {
   return [
     Math.atan2(vector[1], vector[0]),
     Math.asin(vector[2])
+  ]
+}
+
+export function lerpAngles(v1, v2, t) {
+  return [
+    vec2.lerpAngles(v1[0], v2[0], t),
+    (1 - t) * v1[1] + t * v2[1],
   ]
 }
 

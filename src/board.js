@@ -89,8 +89,6 @@ export default class Board extends Thing {
         this.controlMap[c] = fullControlMap[c]
       }
     }
-
-
   }
 
   update () {
@@ -213,6 +211,7 @@ export default class Board extends Thing {
               queue: [
                 'conveyor',
                 'fall',
+                'rotator',
                 'fan0',
                 'fall',
                 'fan1',
@@ -269,6 +268,9 @@ export default class Board extends Thing {
         else if (adv === 'laser') {
           this.advanceLaser(this.advancementData.control)
         }
+        else if (adv === 'rotator') {
+          this.advanceRotator(this.advancementData.control)
+        }
 
         blocked = this.isAnimationBlocking()
       }
@@ -307,6 +309,9 @@ export default class Board extends Thing {
       scrollPosition: 0,
       laserThickness: 0,
       laserLength: 0,
+      rotation: 0,
+      endRotation: 0,
+      stackHeight: 0,
     }})
   }
 
@@ -319,6 +324,7 @@ export default class Board extends Thing {
     const SPIN_FRICTION = 0.04
     const MOVE_SHRINK_RATE = 0.1
     const LASER_SHRINK_RATE = 0.004
+    const ROTATE_LINEAR_SPEED = 0.08
 
     for (let i = 0; i < this.animState.length; i ++) {
       const anim = this.animState[i]
@@ -395,6 +401,32 @@ export default class Board extends Thing {
         }
       }
 
+      // Rotator rotating
+      if (anim.moveType === 'rotate' || anim.moveType === 'rotateShrink') {
+        // If this is already really close, end the animation
+        const dist = vec2.angleDistance(anim.rotation, anim.endRotation)
+        if (dist < ROTATE_LINEAR_SPEED) {
+          anim.moveType = 'none'
+        }
+        // Otherwise, move toward it at a constant velocity
+        else {
+          anim.rotation = vec2.lerpAngles(anim.rotation, anim.endRotation, ROTATE_LINEAR_SPEED/dist)
+        }
+      }
+
+      // Object rotating
+      if (anim.moveType === 'rotateShrink') {
+        // Scale element down so its rotation doesn't cause it to intersect with adjacent tiles
+        const angleScale = Math.max(Math.abs(Math.cos(anim.rotation + Math.PI/4)), Math.abs(Math.sin(anim.rotation + Math.PI/4)))
+        const scale = (1/angleScale) * 0.7071
+        anim.scale = scale
+
+        // Move the element downward to counteract the shrink
+        anim.position = [...anim.endPosition]
+        const heightAdjust = 1 + (2*anim.stackHeight)
+        anim.position[2] -= ((1-scale)/2) * heightAdjust
+      }
+
       // Fan spinning
       if (anim.spinSpeed > 0) {
         anim.spinSpeed *= 1.0-SPIN_FRICTION
@@ -429,6 +461,14 @@ export default class Board extends Thing {
 
   pushable(type) {
     return type === 'crate' || type === 'fan' || type === 'laser'
+  }
+
+  mustShrinkWhenRotating(type) {
+    return type === 'crate'
+  }
+
+  angleToRotation(angle) {
+    return -(angle || 0) * (Math.PI/2)
   }
 
   getElementAt(pos) {
@@ -688,6 +728,84 @@ export default class Board extends Thing {
     }
     if (didSpin) {
       soundmanager.playSound("whoosh", 0.3)
+    }
+  }
+
+  rotatorRotateElement(position, rotateDirection, stackHeight) {
+    const index = this.getElementAt(position)
+
+    // Rotate it
+    let angle = this.state.elements[index].angle || 0
+    let newAngle = angle
+    if (rotateDirection === 'ccw') {
+      // State
+      newAngle ++
+      if (newAngle > 3) newAngle = 0;
+      this.state.elements[index].angle = newAngle
+    }
+    else {
+      // State
+      newAngle --
+      if (newAngle < 0) newAngle = 3;
+      this.state.elements[index].angle = newAngle
+    }
+
+    // Animation
+    this.animState[index].moveType = this.mustShrinkWhenRotating(this.state.elements[index].type) ? 'rotateShrink' : 'rotate'
+    this.animState[index].rotation = this.angleToRotation(angle)
+    this.animState[index].endRotation = this.angleToRotation(newAngle)
+    this.animState[index].position = this.state.elements[index].position
+    this.animState[index].endPosition = this.state.elements[index].position
+    this.animState[index].stackHeight = stackHeight
+  }
+
+  rotatorRotate(position, rotateDirection, stackHeight) {
+    const index = this.getElementAt(position)
+
+    // Base case: this is air
+    if (index === -1) {
+      return false
+    }
+    // Base case: element is not pushable
+    if (!this.pushable(this.state.elements[index].type)) {
+      return false
+    }
+
+    // Perform the rotation and animation
+    this.rotatorRotateElement(position, rotateDirection, stackHeight)
+
+    // Since this element was rotated, try to rotate the element on top of it
+    this.rotatorRotate(vec3.add(position, [0, 0, 1]), rotateDirection, stackHeight + 1)
+
+    // Return result to previous element
+    return true
+  }
+
+  advanceRotator(color) {
+    // Sound
+    let didRotateSomething = false
+
+    // Iterate over rotators...
+    for (const i in this.state.elements) {
+      const element = this.state.elements[i]
+      // If this is a fan of the right color and angle...
+      if (element.type === 'rotator' && element.color === color && !element.destroyed) {
+        let pos = [...element.position]
+        let pos2 = vec3.add(pos, [0, 0, 1])
+
+        // Rotate elements above this
+        let result = this.rotatorRotate(pos2, element.rotateDirection, 0)
+        if (result === true) {
+          didRotateSomething = true
+        }
+
+        // Rotate this rotator as well
+        this.rotatorRotateElement(pos, element.rotateDirection, 0)
+      }
+    }
+
+    if (didRotateSomething) {
+      soundmanager.playSound("shift", 0.3)
     }
   }
 
@@ -1031,7 +1149,7 @@ export default class Board extends Thing {
 
     // Color
     let rColor = this.colorMap[elementState.color]
-    if (elementState.type === 'fan') {
+    if (elementState.type === 'fan' || elementState.type === 'rotator') {
       rColor = [0.4, 0.4, 0.4, 1]
     }
 
@@ -1051,9 +1169,18 @@ export default class Board extends Thing {
     }
 
     // Scale
-    let rScale = 1.0
+    let rScale = [1.0, 1.0, 1.0]
     if (animState.moveType !== 'none') {
-      rScale = animState.scale
+      rScale = [animState.scale, animState.scale, animState.scale]
+    }
+    if (elementState.type === 'rotator' && elementState.rotateDirection === 'ccw') {
+      rScale[0] *= -1
+    }
+
+    // Angle
+    let rAngle = this.angleToRotation(elementState.angle || 0)
+    if (animState.moveType === 'rotate' || animState.moveType === 'rotateShrink') {
+      rAngle = animState.rotation
     }
 
     // Perform the draw operations
@@ -1064,14 +1191,14 @@ export default class Board extends Thing {
     gfx.setTexture(rTexture || assets.textures.square)
     gfx.set('modelMatrix', mat.getTransformation({
       translation: rPos,
-      rotation: [Math.PI/2, 0, (-elementState.angle || 0) * (Math.PI/2)],
+      rotation: [Math.PI/2, 0, rAngle],
       scale: rScale
     }))
     gfx.drawMesh(rMesh || assets.meshes.cube)
 
     // If this is a fan, render the blade as well
     if (elementState.type === 'fan') {
-      let offset = vec2.rotate(0, -0.1, (-(elementState.angle || 0) + 2) * (Math.PI/2))
+      let offset = vec2.rotate(0, -0.1, rAngle + Math.PI)
       offset.push(0.1)
 
       const spin = animState.spinAngle
@@ -1082,10 +1209,25 @@ export default class Board extends Thing {
       gfx.setTexture(rTexture || assets.textures.square)
       gfx.set('modelMatrix', mat.getTransformation({
         translation: vec3.add(rPos, offset),
-        rotation: [Math.PI/2, spin, (-(elementState.angle || 0) + 2) * (Math.PI/2)],
+        rotation: [Math.PI/2, spin, rAngle + Math.PI],
         scale: rScale
       }))
       gfx.drawMesh(assets.meshes.fanBlade)
+    }
+
+    // If this is a rotator, render the blade as well
+    if (elementState.type === 'rotator') {
+      gfx.setShader(rShader)
+      game.getCamera3D().setUniforms()
+      gfx.set('color', this.colorMap[elementState.color])
+      gfx.set('scroll', 0)
+      gfx.setTexture(assets.textures.square)
+      gfx.set('modelMatrix', mat.getTransformation({
+        translation: rPos,
+        rotation: [Math.PI/2, 0, rAngle],
+        scale: rScale
+      }))
+      gfx.drawMesh(assets.meshes.rotatorArrows)
     }
 
     // If this is a conveyor, render the belt as well
@@ -1098,7 +1240,7 @@ export default class Board extends Thing {
       gfx.setTexture(assets.textures.uv_conveyorBelt)
       gfx.set('modelMatrix', mat.getTransformation({
         translation: rPos,
-        rotation: [Math.PI/2, 0, -(elementState.angle || 0) * (Math.PI/2)],
+        rotation: [Math.PI/2, 0, rAngle],
         scale: rScale
       }))
       gfx.drawMesh(assets.meshes.conveyorBelt)
@@ -1106,7 +1248,7 @@ export default class Board extends Thing {
 
     // If this is a laser, render the beam as well
     if (elementState.type === 'laser') {
-      let offset = vec2.rotate(0, animState.laserLength/2, -(elementState.angle || 0) * (Math.PI/2))
+      let offset = vec2.rotate(0, animState.laserLength/2, rAngle)
       offset.push(0)
 
       gfx.setShader(assets.shaders.default)
@@ -1116,7 +1258,7 @@ export default class Board extends Thing {
       gfx.setTexture(assets.textures.square)
       gfx.set('modelMatrix', mat.getTransformation({
         translation: vec3.add(rPos, offset),
-        rotation: [Math.PI/2, 0, (-(elementState.angle || 0) + 1) * (Math.PI/2)],
+        rotation: [Math.PI/2, 0, rAngle + Math.PI/2],
         scale: [animState.laserLength, animState.laserThickness, animState.laserThickness]
       }))
       gfx.drawMesh(assets.meshes.cube)

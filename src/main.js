@@ -26,6 +26,7 @@ await game.loadAssets({
     uv_conveyorBelt: 'images/uv_conveyor_belt.png',
     uv_block: 'images/uv_block.png',
     uv_laser: 'images/uv_laser.png',
+    uv_rotator: 'images/uv_rotator.png',
   },
 
   sounds: {
@@ -57,6 +58,8 @@ await game.loadAssets({
     conveyor: 'models/conveyor.obj',
     conveyorBelt: 'models/conveyor_belt.obj',
     laser: 'models/laser.obj',
+    rotator: 'models/rotator.obj',
+    rotatorArrows: 'models/rotator_arrows.obj',
   }
 })
 
