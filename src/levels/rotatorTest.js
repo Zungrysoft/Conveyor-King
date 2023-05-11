@@ -14,12 +14,21 @@ export const data = {
             rotateDirection: 'ccw',
         },
         {
-            type: 'block',
+            type: 'conveyor',
             position: [-2, 0, 1],
+            color: 'yellow',
         },
         {
-            type: 'block',
+            type: 'crate',
             position: [-2, 0, 2],
+        },
+        {
+            type: 'crate',
+            position: [-2, 0, 3],
+        },
+        {
+            type: 'crate',
+            position: [-2, 0, 4],
         },
 
         // Rotator
@@ -52,7 +61,7 @@ export const data = {
             letter: 'a',
         },
         {
-            type: 'fan',
+            type: 'laser',
             position: [1, 0, 1],
             color: 'orange',
             angle: 3,

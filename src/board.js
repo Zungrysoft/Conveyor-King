@@ -296,8 +296,8 @@ export default class Board extends Thing {
     cam.lookVector = vec3.anglesToVector(this.viewAngle[0], this.viewAngle[1])
   }
 
-  resetAnimations() {
-    this.animState = this.state.elements.map((e) => {return{
+  defaultAnimation() {
+    return {
       position: [0, 0, 0],
       endPosition: [0, 0, 0],
       speed: 0,
@@ -312,7 +312,11 @@ export default class Board extends Thing {
       rotation: 0,
       endRotation: 0,
       shrinkHeight: 0,
-    }})
+    }
+  }
+
+  resetAnimations() {
+    this.animState = this.state.elements.map(e => this.defaultAnimation())
   }
 
   advanceAnimations() {
@@ -324,7 +328,7 @@ export default class Board extends Thing {
     const SPIN_FRICTION = 0.04
     const MOVE_SHRINK_RATE = 0.1
     const LASER_SHRINK_RATE = 0.004
-    const ROTATE_LINEAR_SPEED = 0.08
+    const ROTATE_LINEAR_SPEED = 0.1
 
     for (let i = 0; i < this.animState.length; i ++) {
       const anim = this.animState[i]
@@ -407,25 +411,26 @@ export default class Board extends Thing {
         const dist = vec2.angleDistance(anim.rotation, anim.endRotation)
         if (dist < ROTATE_LINEAR_SPEED) {
           anim.moveType = 'none'
+          anim.scale = 1.0
         }
         // Otherwise, move toward it at a constant velocity
         else {
           anim.rotation = vec2.lerpAngles(anim.rotation, anim.endRotation, ROTATE_LINEAR_SPEED/dist)
-        }
 
-        // Object rotating
-        // Scale element down so its rotation doesn't cause it to intersect with adjacent tiles
-        const angleScale = Math.max(Math.abs(Math.cos(anim.rotation + Math.PI/4)), Math.abs(Math.sin(anim.rotation + Math.PI/4)))
-        const scale = (1/angleScale) * 0.7071
-        let heightAdjust = (2*anim.shrinkHeight)
-        if (anim.moveType === 'rotateShrink') {
-          anim.scale = scale
-          heightAdjust ++
-        }
+          // Object rotating
+          // Scale element down so its rotation doesn't cause it to intersect with adjacent tiles
+          const angleScale = Math.max(Math.abs(Math.cos(anim.rotation + Math.PI/4)), Math.abs(Math.sin(anim.rotation + Math.PI/4)))
+          const scale = (1/angleScale) * 0.7071
+          let heightAdjust = (2*anim.shrinkHeight)
+          if (anim.moveType === 'rotateShrink') {
+            anim.scale = scale
+            heightAdjust ++
+          }
 
-        // Move the element downward to counteract rotateShrink shrinking
-        anim.position = [...anim.endPosition]
-        anim.position[2] -= ((1-scale)/2) * heightAdjust
+          // Move the element downward to counteract rotateShrink shrinking
+          anim.position = [...anim.endPosition]
+          anim.position[2] -= ((1-scale)/2) * heightAdjust
+        }
       }
 
       // Fan spinning
