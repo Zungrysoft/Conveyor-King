@@ -1,6 +1,5 @@
 export const data = {
     cratesRequired: 1,
-    cratesDelivered: 0,
     cameraDistance: 6,
     cameraPosition: [3, 3, 0],
     cameraStartAngle: [Math.PI*(2/4), Math.PI*(2/8)],
@@ -79,7 +78,7 @@ export const data = {
         },
         {
             type: 'block',
-            position: [3, 0, 1],
+            position: [1, 0, 1],
         },
 
         // Platform

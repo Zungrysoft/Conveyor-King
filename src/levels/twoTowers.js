@@ -1,6 +1,5 @@
 export const data = {
     cratesRequired: 9,
-    cratesDelivered: 0,
     cameraDistance: 5,
     cameraPosition: [0, 0, 2],
     cameraStartAngle: [Math.PI*(2/4), Math.PI*(0/8)],

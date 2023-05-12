@@ -442,7 +442,7 @@ export default class Board extends Thing {
       // Texture scrolling
       if (anim.scrollTime > 0) {
         anim.scrollTime -= 1
-        anim.scrollPosition += MOVE_LINEAR_SPEED / 2
+        anim.scrollPosition += MOVE_LINEAR_SPEED
       }
 
       // Laser beam
