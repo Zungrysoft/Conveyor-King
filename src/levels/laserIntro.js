@@ -271,7 +271,7 @@ export const data = {
         {
             type: 'fan',
             position: [-1, -1, 1],
-            color: 'red',
+            color: 'green',
             angle: 1,
 
         },

@@ -1,7 +1,7 @@
 export const data = {
     cratesRequired: 1,
     cameraDistance: 5,
-    cameraPosition: [0, 0, 0],
+    cameraPosition: [0, 0, 6],
     cameraStartAngle: [Math.PI*(2/4), Math.PI*(2/8)],
     floorHeight: -3,
     elements: [
@@ -49,6 +49,30 @@ export const data = {
         {
             type: 'crate',
             position: [-2, -2, 4],
+        },
+        {
+            type: 'crate',
+            position: [-2, -2, 5],
+        },
+        {
+            type: 'crate',
+            position: [-2, -2, 6],
+        },
+        {
+            type: 'crate',
+            position: [-2, -2, 7],
+        },
+        {
+            type: 'crate',
+            position: [-2, -2, 8],
+        },
+        {
+            type: 'crate',
+            position: [-2, -2, 9],
+        },
+        {
+            type: 'crate',
+            position: [-2, -2, 10],
         },
 
         // Rotator
