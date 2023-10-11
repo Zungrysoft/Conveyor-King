@@ -13,34 +13,25 @@ import * as simpleFans from './levels/simpleFans.js'
 import * as twoTowers from './levels/twoTowers.js'
 import * as rotatorTest from './levels/rotatorTest.js'
 
+const LEVEL_LIST = [
+  intro,
+  rotatorTest,
+  fanIntro,
+  stacking,
+  fanPushesFan,
+  simpleFans,
+  shuffle,
+  sorting,
+  laserIntro,
+  fantastic,
+  twoTowers,
+  plinko,
+  zapYourProblems,
+]
+
 export function getLevel(lvl) {
   // Retrieve level data
-  const levelList = [
-    intro,
-    rotatorTest,
-    fanIntro,
-    stacking,
-    fanPushesFan,
-    simpleFans,
-    shuffle,
-    sorting,
-    laserIntro,
-    fantastic,
-    twoTowers,
-    plinko,
-    zapYourProblems,
-    level1,
-    level1,
-    level1,
-    level1,
-    level1,
-    level1,
-    level1,
-    level1,
-    level1,
-    level1,
-  ]
-  let ret = JSON.parse(JSON.stringify(levelList[lvl-1].data))
+  let ret = JSON.parse(JSON.stringify(LEVEL_LIST[lvl-1].data))
 
   // Clean up elements
   for (const element of ret.elements) {
@@ -68,5 +59,9 @@ export function getLevel(lvl) {
   }
 
   return ret
+}
+
+export function getLevelCount() {
+  return LEVEL_LIST.length
 }
 

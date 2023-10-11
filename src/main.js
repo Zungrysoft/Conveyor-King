@@ -93,17 +93,9 @@ assets.meshes = Object.fromEntries(
   ])
 )
 
-// console.log(assets)
-
-game.globals.levelCount = 12
-game.globals.levelCompletions = []
 game.globals.usingGamepad = false
-
-for (let i = 0; i < game.globals.levelCount; i++) {
-  game.globals.levelCompletions.push(false)
-}
+game.globals.levelCompletions = {}
 game.globals.level = 1
-
 
 game.setScene(() => {
   game.addThing(new Board())

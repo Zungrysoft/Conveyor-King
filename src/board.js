@@ -8,7 +8,7 @@ import * as vec3 from 'vector3'
 import Thing from 'thing'
 import Element from './element.js'
 import { assets } from 'game'
-import { getLevel } from './levelloader.js'
+import { getLevel, getLevelCount } from './levelloader.js'
 
 export default class Board extends Thing {
   state = {}
@@ -106,7 +106,7 @@ export default class Board extends Thing {
         }
       }
       if (game.keysPressed.BracketRight || game.keysPressed.Equal || game.keysPressed.NumpadAdd) {
-        if (game.globals.level < game.globals.levelCount) {
+        if (game.globals.level < getLevelCount()) {
           game.globals.level ++
           game.resetScene()
         }
@@ -861,27 +861,78 @@ export default class Board extends Thing {
   draw () {
     const { ctx } = game
 
-    // Draw the control HUD
-    {
-      ctx.save()
-      ctx.translate(32, game.config.height)
-      ctx.font = 'italic 40px Times New Roman'
-      const controls = Object.keys(this.controlMap).sort((a, b) => {return this.controlMap[a].priority < this.controlMap[b].priority ? 1 : -1})
-      for (const key of controls) {
-        const control = this.controlMap[key]
-        const keyName = game.globals.usingGamepad ? control.buttonName : control.name
+    const drawText = (text, fontSize=40, position=[0, 0], align=[0, 0]) => {
+      // Hud scale and text size
+      const hs = 1
 
-        ctx.translate(0, -48)
-
-        const str = keyName + ': ' + key
-        ctx.fillStyle = 'black'
-        ctx.fillText(str, 0, 0)
-        ctx.fillStyle = 'white'
-        ctx.fillText(str, 4, -4)
+      // Align horizontal
+      let textAlign = 'left'
+      let finalPosition = [0, 0]
+      if (align[0] < 0) {
+        finalPosition[0] = Math.round(position[0]*hs)
+        textAlign = 'left'
       }
+      else if (align[0] > 0) {
+        finalPosition[0] = game.config.width - Math.round(position[0]*hs)
+        textAlign = 'right'
+      }
+      else {
+        finalPosition[0] = game.config.width/2 + Math.round(position[0]*hs)
+        textAlign = 'center'
+      }
+
+      // Align vertical
+      if (align[1] < 0) {
+        finalPosition[1] = Math.round(position[1]*hs)
+      }
+      else if (align[1] > 0) {
+        finalPosition[1] = game.config.height - Math.round(position[1]*hs)
+      }
+      else {
+        finalPosition[1] = game.config.height/2 + Math.round(position[1]*hs)
+      }
+
+      // Font size
+      const adjustedFontSize = Math.round(fontSize * hs)
+
+      // Shadow offset
+      const shadowOffset = Math.round((fontSize * hs) / 10)
+
+      // Render
+      ctx.save()
+      ctx.translate(...finalPosition)
+      ctx.font = `italic ${adjustedFontSize}px Times New Roman`
+      const str = text
+      ctx.textAlign = textAlign
+      ctx.fillStyle = 'black'
+      ctx.fillText(str, 0, 0)
+      ctx.fillStyle = 'white'
+      ctx.fillText(str, shadowOffset, -shadowOffset)
       ctx.restore()
     }
 
+    // Crates Delivered
+    drawText(
+      this.state.cratesDelivered + "/" + this.state.cratesRequired + " crates correctly sorted",
+      40, [32, 72], [-1, -1]
+    )
+
+    // Controls
+    {
+      const controls = Object.keys(this.controlMap).sort((a, b) => {return this.controlMap[a].priority < this.controlMap[b].priority ? 1 : -1})
+      let controlIndex = 1
+      for (const key of controls) {
+        const control = this.controlMap[key]
+        const keyName = game.globals.usingGamepad ? control.buttonName : control.name
+        drawText(
+          keyName + ': ' + key,
+          40, [32, 48 * controlIndex], [-1, 1]
+        )
+        controlIndex ++
+      }
+    }
+
+    // Aux controls
     {
       const auxControls = [
         "Arrow Keys: Camera",
@@ -893,92 +944,44 @@ export default class Board extends Thing {
         "RB: Undo",
         "LB: Restart",
       ].reverse()
-      ctx.save()
-      ctx.translate(game.config.width - 48, game.config.height)
-      ctx.font = 'italic 40px Times New Roman'
-      ctx.textAlign = 'right'
+      let controlIndex = 1
       for (const control of (game.globals.usingGamepad ? auxControlsGamepad : auxControls)) {
-        ctx.translate(0, -48)
-        const str = control
-        ctx.fillStyle = 'black'
-        ctx.fillText(str, 0, 0)
-        ctx.fillStyle = 'white'
-        ctx.fillText(str, 4, -4)
+        drawText(
+          control,
+          40, [32, 48 * controlIndex], [1, 1]
+        )
+        controlIndex ++
       }
-      ctx.restore()
-    }
-
-    // Draw the score HUD
-    {
-      ctx.save()
-      ctx.translate(32, 72)
-      ctx.font = 'italic 40px Times New Roman'
-      const str = this.state.cratesDelivered + "/" + this.state.cratesRequired + " crates correctly sorted"
-      ctx.fillStyle = 'black'
-      ctx.fillText(str, 0, 0)
-      ctx.fillStyle = 'white'
-      ctx.fillText(str, 4, -4)
-      ctx.restore()
     }
 
     // Draw the victory text
     const victory = this.state.cratesDelivered >= this.state.cratesRequired
     if (victory) {
       // You win message
-      {
-        ctx.save()
-        ctx.translate(game.config.width/2, game.config.height/2 - 100)
-        ctx.font = 'italic 130px Times New Roman'
-        ctx.textAlign = 'center'
-        const str = this.state.level === 0 ? "Level Complete!" : "Level " + this.state.level + " Complete!"
-        ctx.fillStyle = 'black'
-        ctx.fillText(str, 0, 0)
-        ctx.fillStyle = 'white'
-        ctx.fillText(str, 4, -4)
-        ctx.restore()
-      }
+      drawText(
+        this.state.level === 0 ? "Level Complete!" : "Level " + this.state.level + " Complete!",
+        130, [0, -100], [0, 0]
+      )
 
       // Level change guide
-      if (this.state.level !== 0) {
-        ctx.save()
-        ctx.translate(game.config.width/2, game.config.height/2 + 100)
-        ctx.font = 'italic bold 50px Times New Roman'
-        ctx.textAlign = 'center'
-        const str = game.globals.usingGamepad ? "Use LT and RT to change levels" : "Use - and + to change levels"
-        ctx.fillStyle = 'black'
-        ctx.fillText(str, 0, 0)
-        ctx.fillStyle = 'white'
-        ctx.fillText(str, 4, -4)
-        ctx.restore()
-      }
+      drawText(
+        game.globals.usingGamepad ? "Use LT and RT to change levels" : "Use - and + to change levels",
+        50, [0, 100], [0, 0]
+      )
     }
     if (!victory || this.state.level === 0) {
       // Draw the level Name
-      {
-        ctx.save()
-        ctx.translate(game.config.width/2, 112)
-        ctx.font = 'italic 80px Times New Roman'
-        ctx.textAlign = 'center'
-        const str = this.state.level === 0 ? this.state.levelTitle : "Level " + this.state.level
-        ctx.fillStyle = 'black'
-        ctx.fillText(str, 0, 0)
-        ctx.fillStyle = 'white'
-        ctx.fillText(str, 4, -4)
-        ctx.restore()
-      }
+      drawText(
+        this.state.level === 0 ? this.state.levelTitle : "Level " + this.state.level,
+        80, [0, 112], [0, -1]
+      )
 
       // Draw completion text
       if (game.globals.levelCompletions[this.state.level-1] === true) {
-        ctx.save()
-        ctx.translate(game.config.width/2, 180)
-        ctx.font = 'italic 40px Times New Roman'
-        ctx.textAlign = 'center'
-        const str = "Complete!"
-        ctx.fillStyle = 'black'
-        ctx.fillText(str, 0, 0)
-        ctx.fillStyle = 'white'
-        ctx.fillText(str, 4, -4)
-        ctx.restore()
+        drawText(
+          "Complete!",
+          40, [0, 180], [0, -1]
+        )
       }
     }
 

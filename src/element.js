@@ -234,12 +234,12 @@ export default class Element extends Thing {
       isDelivered: false,
       shrinkHeight: 0,
       shrinkWhenRotating: false,
+      spinAngle: this.anim?.spinAngle || 0,
+      spinSpeed: this.anim?.spinSpeed || 0,
+      scrollPosition: this.anim?.scrollPosition || 0,
+      laserThickness: this.anim?.laserThickness || 0,
+      laserLength: this.anim?.laserLength || 0,
     }
-    this.anim.spinAngle = this.anim.spinAngle || 0
-    this.anim.spinSpeed = this.anim.spinSpeed || 0
-    this.anim.scrollPosition = this.anim.scrollPosition || 0
-    this.anim.laserThickness = this.anim.laserThickness || 0
-    this.anim.laserLength = this.anim.laserLength || 0
   }
 
   // Draws one game element
