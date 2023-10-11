@@ -217,6 +217,8 @@ export default class Element extends Thing {
   startAnimateLaser(laserLength) {
     this.anim.laserLength = laserLength
     this.anim.laserThickness = LASER_THICKNESS
+    this.anim.laserPosition = [...this.elementReference.position]
+    this.anim.laserDirection = this.elementReference.direction
   }
 
   // Reset animation data
@@ -239,6 +241,8 @@ export default class Element extends Thing {
       scrollPosition: this.anim?.scrollPosition || 0,
       laserThickness: this.anim?.laserThickness || 0,
       laserLength: this.anim?.laserLength || 0,
+      laserPosition: this.anim?.laserPosition || [0, 0, 0],
+      laserDirection: this.anim?.laserDirection || 'south',
     }
   }
 
@@ -311,8 +315,7 @@ export default class Element extends Thing {
 
     // If this is a fan, render the blade as well
     if (this.elementReference.type === 'fan') {
-      let offset = vec2.rotate([0, -0.1], rRot[2] + Math.PI)
-      offset.push(0.1)
+      let offset = [...vec2.rotate([0, -0.1], rRot[2] + Math.PI), 0.1]
       const spin = this.anim.spinAngle
 
       this.drawMesh({
@@ -339,14 +342,15 @@ export default class Element extends Thing {
 
     // If this is a laser, render the beam as well
     if (this.elementReference.type === 'laser' && this.anim.laserThickness > 0) {
-      let offset = vec2.rotate([0, this.anim.laserLength/2], rRot[2])
-      offset.push(0)
+      let lrAngle = vec2.vectorToAngle(vec2.directionToVector(this.anim.laserDirection))
+      let offset = [...vec2.rotate([0, this.anim.laserLength/2], lrAngle - Math.PI/2), 0]
+      let lrPos = vec3.add(this.anim.laserPosition, offset)
 
       this.drawMesh({
         mesh: assets.meshes.cube,
         texture: assets.textures.square,
-        position: vec3.add(rPos, offset),
-        rotation: vec3.add(rRot, [0, 0, Math.PI/2]),
+        position: lrPos,
+        rotation: [0, 0, lrAngle],
         scale: [this.anim.laserLength, this.anim.laserThickness, this.anim.laserThickness],
         color: rColor,
       })
