@@ -13,6 +13,7 @@ const MOVE_LINEAR_SPEED = 0.035
 const GRAVITY = -0.01
 const MOVE_FRICTION_TIME = 30
 const MOVE_FRICTION_FRICTION = 0.0025
+const SPIN_SPEED = 0.3
 const SPIN_FRICTION = 0.02
 const MOVE_SHRINK_RATE = 0.05
 const LASER_THICKNESS = 0.04
@@ -205,8 +206,8 @@ export default class Element extends Thing {
     }
   }
 
-  startAnimateSpin(speed) {
-    this.anim.spinSpeed = speed
+  startAnimateSpin() {
+    this.anim.spinSpeed = SPIN_SPEED
   }
 
   startAnimateScroll() {

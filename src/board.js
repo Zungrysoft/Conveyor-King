@@ -569,7 +569,7 @@ export default class Board extends Thing {
         }
 
         // Fan spinning animation
-        this.getElementThing(this.state.elements[i]).startAnimateSpin(0.6)
+        this.getElementThing(this.state.elements[i]).startAnimateSpin()
         didSpin = true
       }
     }
@@ -795,10 +795,6 @@ export default class Board extends Thing {
     // Track which elements are destroyed
     const destroyed = this.state.elements.map(_ => false)
 
-    // Sound effects
-    let didShootLaser = false
-    let didHitLaser = false
-
     // Iterate over elements...
     for (const i in this.state.elements) {
       const element = this.state.elements[i]
@@ -806,7 +802,9 @@ export default class Board extends Thing {
       if (element.type === 'laser' && element.color === color && !element.destroyed) {
         // Laser animation
         this.getElementThing(element).startAnimateLaser(50)
-        didShootLaser = true
+
+        // Sound effect
+        soundmanager.playSound("laser", 0.2)
 
         // Find elements in this laser's line
         let pos = [...element.position]
@@ -821,19 +819,13 @@ export default class Board extends Thing {
             // Animation
             this.getElementThing(element).startAnimateLaser(vec2.magnitude(vec3.subtract(pos, element.position)))
 
-            didHitLaser = true
+            // Sound effect
+            soundmanager.playSound("laserHit", 0.8)
 
             break
           }
         }
       }
-    }
-
-    if (didShootLaser) {
-      soundmanager.playSound("laser", 0.2)
-    }
-    if (didHitLaser) {
-      soundmanager.playSound("laserHit", 0.8)
     }
 
     for (const i in this.state.elements) {
