@@ -9,28 +9,28 @@ export const data = {
         {
             type: 'conveyor',
             position: [0, 0, 0],
-            angle: 1,
+            direction: "east",
             color: 'red',
             scaffold: true,
         },
         {
             type: 'conveyor',
             position: [1, 0, 0],
-            angle: 1,
+            direction: "east",
             color: 'red',
             scaffold: true,
         },
         {
             type: 'conveyor',
             position: [2, 0, 0],
-            angle: 1,
+            direction: "east",
             color: 'red',
             scaffold: true,
         },
         {
             type: 'conveyor',
             position: [3, 0, 0],
-            angle: 1,
+            direction: "east",
             color: 'red',
             scaffold: true,
         },
@@ -43,19 +43,19 @@ export const data = {
         {
             type: 'conveyor',
             position: [3, 0, -3],
-            angle: 1,
+            direction: "east",
             color: 'red',
         },
         {
             type: 'conveyor',
             position: [4, 0, -3],
-            angle: 1,
+            direction: "east",
             color: 'green',
         },
         {
             type: 'conveyor',
             position: [5, 0, -3],
-            angle: 1,
+            direction: "east",
             color: 'green',
         },
 
@@ -63,19 +63,19 @@ export const data = {
         {
             type: 'conveyor',
             position: [6, 0, -3],
-            angle: 1,
+            direction: "east",
             color: 'green',
         },
         {
             type: 'conveyor',
             position: [7, 0, -4],
-            angle: 1,
+            direction: "east",
             color: 'red',
         },
         {
             type: 'conveyor',
             position: [8, 0, -4],
-            angle: 1,
+            direction: "east",
             color: 'red',
         },
 
@@ -95,7 +95,7 @@ export const data = {
         {
             type: 'laser',
             position: [9, 0, 2],
-            angle: 3,
+            direction: "west",
             color: 'green',
         },
 
@@ -103,7 +103,7 @@ export const data = {
         {
             type: 'laser',
             position: [9, 5, -1],
-            angle: 2,
+            direction: "north",
             color: 'blue',
         },
 
@@ -115,31 +115,31 @@ export const data = {
         {
             type: 'conveyor',
             position: [9, 0, -4],
-            angle: 0,
+            direction: "south",
             color: 'red',
         },
         {
             type: 'conveyor',
             position: [9, 1, -4],
-            angle: 0,
+            direction: "south",
             color: 'red',
         },
         {
             type: 'conveyor',
             position: [9, 2, -4],
-            angle: 0,
+            direction: "south",
             color: 'red',
         },
         {
             type: 'conveyor',
             position: [9, 3, -4],
-            angle: 0,
+            direction: "south",
             color: 'red',
         },
         {
             type: 'conveyor',
             position: [9, 4, -4],
-            angle: 0,
+            direction: "south",
             color: 'red',
         },
         {
@@ -155,25 +155,25 @@ export const data = {
         {
             type: 'chute',
             position: [9, 1, -5],
-            angle: 3,
+            direction: "west",
             letter: 'a',
         },
         {
             type: 'chute',
             position: [9, 2, -5],
-            angle: 3,
+            direction: "west",
             letter: 'b',
         },
         {
             type: 'chute',
             position: [9, 3, -5],
-            angle: 3,
+            direction: "west",
             letter: 'c',
         },
         {
             type: 'chute',
             position: [9, 4, -5],
-            angle: 3,
+            direction: "west",
             letter: 'd',
         },
 
@@ -199,25 +199,25 @@ export const data = {
         {
             type: 'laser',
             position: [6, 1, -4],
-            angle: 1,
+            direction: "east",
             color: 'yellow',
         },
         {
             type: 'laser',
             position: [6, 2, -4],
-            angle: 1,
+            direction: "east",
             color: 'yellow',
         },
         {
             type: 'laser',
             position: [6, 3, -4],
-            angle: 1,
+            direction: "east",
             color: 'yellow',
         },
         {
             type: 'laser',
             position: [6, 4, -4],
-            angle: 1,
+            direction: "east",
             color: 'yellow',
         },
 
@@ -251,7 +251,7 @@ export const data = {
         {
             type: 'fan',
             position: [8, 0, -1],
-            angle: 3,
+            direction: "west",
             color: 'green',
         },
 
@@ -259,22 +259,22 @@ export const data = {
         {
             type: 'scaffold',
             position: [0, 0, -1],
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'scaffold',
             position: [1, 0, -1],
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'scaffold',
             position: [1, 0, -2],
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'scaffold',
             position: [1, 0, -3],
-            angle: 1,
+            direction: "east",
         },
     ],
 }

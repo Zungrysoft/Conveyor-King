@@ -25,7 +25,7 @@ export const data = {
         {
             type: 'laser',
             position: [2, -6, 0],
-            angle: 0,
+            direction: "south",
             color: 'red',
         },
 
@@ -49,7 +49,7 @@ export const data = {
         {
             type: 'laser',
             position: [-2, -6, 0],
-            angle: 0,
+            direction: "south",
             color: 'yellow',
         },
 
@@ -57,19 +57,19 @@ export const data = {
         {
             type: 'chute',
             position: [2, -2, 0],
-            angle: 2,
+            direction: "north",
             letter: 'a',
         },
         {
             type: 'conveyor',
             position: [1, -2, 0],
-            angle: 1,
+            direction: "east",
             color: 'blue',
         },
         {
             type: 'conveyor',
             position: [3, -2, 0],
-            angle: 3,
+            direction: "west",
             color: 'blue',
         },
         {
@@ -85,7 +85,7 @@ export const data = {
         {
             type: 'conveyor',
             position: [-3, -2, 0],
-            angle: 1,
+            direction: "east",
             color: 'blue',
         },
         {
@@ -254,7 +254,7 @@ export const data = {
         {
             type: 'fan',
             position: [5, 0, 1],
-            angle: 3,
+            direction: "west",
             color: 'yellow',
         },
         {
@@ -273,7 +273,7 @@ export const data = {
         {
             type: 'fan',
             position: [5, 2, 1],
-            angle: 3,
+            direction: "west",
             color: 'yellow',
         },
         {
@@ -292,7 +292,7 @@ export const data = {
         {
             type: 'fan',
             position: [5, 4, 1],
-            angle: 3,
+            direction: "west",
             color: 'yellow',
         },
         {
@@ -312,7 +312,7 @@ export const data = {
         {
             type: 'fan',
             position: [-5, 0, 1],
-            angle: 1,
+            direction: "east",
             color: 'red',
         },
         {
@@ -331,7 +331,7 @@ export const data = {
         {
             type: 'fan',
             position: [-5, 2, 1],
-            angle: 1,
+            direction: "east",
             color: 'red',
         },
         {
@@ -350,7 +350,7 @@ export const data = {
         {
             type: 'fan',
             position: [-5, 4, 1],
-            angle: 1,
+            direction: "east",
             color: 'red',
         },
         {
@@ -371,7 +371,7 @@ export const data = {
         {
             type: 'fan',
             position: [0, 7, 1],
-            angle: 2,
+            direction: "north",
             color: 'green',
         },
         {
@@ -382,7 +382,7 @@ export const data = {
         {
             type: 'fan',
             position: [1, 7, 1],
-            angle: 2,
+            direction: "north",
             color: 'green',
         },
         {
@@ -393,7 +393,7 @@ export const data = {
         {
             type: 'fan',
             position: [2, 7, 1],
-            angle: 2,
+            direction: "north",
             color: 'green',
         },
         {
@@ -404,7 +404,7 @@ export const data = {
         {
             type: 'fan',
             position: [3, 7, 1],
-            angle: 2,
+            direction: "north",
             color: 'green',
         },
         {
@@ -417,7 +417,7 @@ export const data = {
         {
             type: 'fan',
             position: [-1, 7, 1],
-            angle: 2,
+            direction: "north",
             color: 'blue',
         },
         {
@@ -428,7 +428,7 @@ export const data = {
         {
             type: 'fan',
             position: [-2, 7, 1],
-            angle: 2,
+            direction: "north",
             color: 'blue',
         },
         {
@@ -439,7 +439,7 @@ export const data = {
         {
             type: 'fan',
             position: [-3, 7, 1],
-            angle: 2,
+            direction: "north",
             color: 'blue',
         },
         {
@@ -451,13 +451,13 @@ export const data = {
         {
             type: 'crate',
             position: [-2, 5, 1],
-            angle: 2,
+            direction: "north",
             letter: 'b',
         },
         {
             type: 'crate',
             position: [1, 4, 1],
-            angle: 2,
+            direction: "north",
             letter: 'a',
         },
     ],

@@ -21,7 +21,7 @@ export const data = {
             type: 'conveyor',
             position: [3, 0, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'block',
@@ -31,7 +31,7 @@ export const data = {
             type: 'laser',
             position: [4, 0, 1],
             color: 'red',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'block',
@@ -41,7 +41,7 @@ export const data = {
             type: 'laser',
             position: [4, -1, 1],
             color: 'red',
-            angle: 2,
+            direction: "north",
         },
     ],
 }

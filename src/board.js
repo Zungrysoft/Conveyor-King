@@ -1,41 +1,30 @@
-import * as game from './core/game.js'
-import * as u from './core/utils.js'
-import * as soundmanager from './core/soundmanager.js'
-import * as gfx from './core/webgl.js'
-import * as mat from './core/matrices.js'
-import * as vec2 from './core/vector2.js'
-import * as vec3 from './core/vector3.js'
-import Thing from './core/thing.js'
-import { assets } from './core/game.js'
+import * as game from 'game'
+import * as u from 'utils'
+import * as soundmanager from 'soundmanager'
+import * as gfx from 'webgl'
+import * as mat from 'matrices'
+import * as vec2 from 'vector2'
+import * as vec3 from 'vector3'
+import Thing from 'thing'
+import Element from './element.js'
+import { assets } from 'game'
 import { getLevel } from './levelloader.js'
 
 export default class Board extends Thing {
   state = {}
-  animState = []
   advancementData = {
     control: '',
     queue: ['fall'],
   }
   stateStack = []
-  backgroundScroll = [0, 0]
   backgroundPattern = game.ctx.createPattern(game.assets.images.background, 'repeat')
   viewAngle = [Math.PI/2, Math.PI*(1/4)]
   viewAngleTarget = this.viewAngle
   viewDistance = 4
   viewPosition = [0, 0, 0]
   time = 0
-  actionTime = 0
-  colorMap = {
-    'red': [0.5, 0.0, 0.0, 1],
-    'green': [0.0, 0.6, 0.0, 1],
-    'blue': [0.0, 0.0, 0.4, 1],
-    'yellow': [0.9, 0.9, 0.0, 1],
-    'cyan': [0.0, 0.5, 0.5, 1],
-    'purple': [0.5, 0.0, 0.8, 1],
-    'orange': [1.0, 0.5, 0.0, 1],
-    'white': [1.0, 1.0, 1.0, 1],
-  }
   controlMap = {}
+  lastControlTime = 0
 
   constructor () {
     super()
@@ -95,29 +84,28 @@ export default class Board extends Thing {
     super.update()
 
     this.time ++
-    this.actionTime --
     this.errorTime --
 
     // Decide whether to show keyboard controls or gamepad controls based on which was used most recently
-    if (Object.keys(game.buttonsPressed).length) {
-      game.globals.usingGamepad = true
-    }
-    if (Object.keys(game.keysPressed).length && !game.keysPressed.KeyL) {
-      game.globals.usingGamepad = false
-    }
+    // if (Object.keys(game.buttonsPressed).length) {
+    //   game.globals.usingGamepad = true
+    // }
+    // if (Object.keys(game.keysPressed).length && !game.keysPressed.KeyL) {
+    //   game.globals.usingGamepad = false
+    // }
 
     // Level controls
     if (this.time > 5) {
-      if (game.keysPressed.Backspace || game.buttonsPressed[4]) {
+      if (game.keysPressed.Backspace) {
         game.resetScene()
       }
-      if (game.keysPressed.BracketLeft || game.keysPressed.Minus || game.keysPressed.NumpadSubtract || game.buttonsPressed[6]) {
+      if (game.keysPressed.BracketLeft || game.keysPressed.Minus || game.keysPressed.NumpadSubtract) {
         if (game.globals.level > 1) {
           game.globals.level --
           game.resetScene()
         }
       }
-      if (game.keysPressed.BracketRight || game.keysPressed.Equal || game.keysPressed.NumpadAdd || game.buttonsPressed[7]) {
+      if (game.keysPressed.BracketRight || game.keysPressed.Equal || game.keysPressed.NumpadAdd) {
         if (game.globals.level < game.globals.levelCount) {
           game.globals.level ++
           game.resetScene()
@@ -153,16 +141,16 @@ export default class Board extends Thing {
     }
 
     // Camera controls
-    if (game.keysPressed.ArrowRight || game.buttonsPressed[15]) {
+    if (game.keysPressed.ArrowRight) {
       this.viewAngleTarget[0] -= Math.PI/4
     }
-    if (game.keysPressed.ArrowLeft || game.buttonsPressed[14]) {
+    if (game.keysPressed.ArrowLeft) {
       this.viewAngleTarget[0] += Math.PI/4
     }
-    if (game.keysPressed.ArrowUp || game.buttonsPressed[12]) {
+    if (game.keysPressed.ArrowUp) {
       this.viewAngleTarget[1] += Math.PI/8
     }
-    if (game.keysPressed.ArrowDown || game.buttonsPressed[13]) {
+    if (game.keysPressed.ArrowDown) {
       this.viewAngleTarget[1] -= Math.PI/8
     }
     this.viewAngleTarget[1] = u.clamp(this.viewAngleTarget[1], 0, Math.PI/2)
@@ -170,7 +158,7 @@ export default class Board extends Thing {
     this.updateCamera()
 
     // Undo function
-    if (game.keysPressed.KeyU || game.keysPressed.Space || game.buttonsPressed[5]) {
+    if (game.keysPressed.KeyU || game.keysPressed.Space) {
       // Make sure there are actually things to undo
       if (this.stateStack.length > 0) {
         let newState = this.stateStack.pop()
@@ -199,12 +187,12 @@ export default class Board extends Thing {
     let blocked = this.isAnimationBlocking()
 
     // If not blocked...
-    if (!blocked) {
+    if (!blocked && this.time - this.lastControlTime > 10) {
       // If advancement queue is empty, accept user input
       if (this.advancementData.queue.length === 0) {
         for (const control in this.controlMap) {
           // If the user pressed a control key...
-          if (this.actionTime <= 0 && (game.keysDown[this.controlMap[control].keyCode] || game.buttonsDown[this.controlMap[control].buttonId])) {
+          if (game.keysDown[this.controlMap[control].keyCode]) {
             // Create action queue
             this.advancementData = {
               control: control,
@@ -236,7 +224,7 @@ export default class Board extends Thing {
             }
 
             // Limit the player to one action every n frames
-            // this.actionTime = 0
+             this.lastControlTime = this.time
 
             // Done looking for controls
             break
@@ -254,16 +242,16 @@ export default class Board extends Thing {
           this.advanceFall()
         }
         else if (adv === 'fan0') {
-          this.advanceFan(this.advancementData.control, 0)
+          this.advanceFan(this.advancementData.control, "east")
         }
         else if (adv === 'fan1') {
-          this.advanceFan(this.advancementData.control, 1)
+          this.advanceFan(this.advancementData.control, "south")
         }
         else if (adv === 'fan2') {
-          this.advanceFan(this.advancementData.control, 2)
+          this.advanceFan(this.advancementData.control, "west")
         }
         else if (adv === 'fan3') {
-          this.advanceFan(this.advancementData.control, 3)
+          this.advanceFan(this.advancementData.control, "north")
         }
         else if (adv === 'laser') {
           this.advanceLaser(this.advancementData.control)
@@ -276,205 +264,73 @@ export default class Board extends Thing {
       }
     }
 
-    // Advance animations
-    this.advanceAnimations()
-
     // Check for win
     if (this.state.cratesDelivered >= this.state.cratesRequired && this.state.level > 0) {
       game.globals.levelCompletions[this.state.level-1] = true
     }
-
   }
 
   updateCamera() {
     // Set up 3D camera
     const cam = game.getCamera3D()
-    cam.position[0] = Math.cos(this.viewAngle[0]) * Math.cos(this.viewAngle[1]) * this.viewDistance
-    cam.position[1] = Math.sin(this.viewAngle[0]) * Math.cos(this.viewAngle[1]) * this.viewDistance
-    cam.position[2] = Math.sin(this.viewAngle[1]) * this.viewDistance + 1
-    cam.position = vec3.add(cam.position, this.viewPosition)
-    cam.lookVector = vec3.anglesToVector(this.viewAngle[0], this.viewAngle[1])
-  }
 
-  defaultAnimation() {
-    return {
-      position: [0, 0, 0],
-      endPosition: [0, 0, 0],
-      speed: 0,
-      moveType: 'none',
-      spinSpeed: 0,
-      spinAngle: 0,
-      scale: 1.0,
-      scrollTime: 0,
-      scrollPosition: 0,
-      laserThickness: 0,
-      laserLength: 0,
-      rotation: 0,
-      endRotation: 0,
-      shrinkHeight: 0,
-    }
+    // Set up clip plane
+    cam.near = 0.1
+    cam.far = 1000
+
+    const offsetPosition = [
+      Math.cos(this.viewAngle[0]) * Math.cos(this.viewAngle[1]) * this.viewDistance,
+      Math.sin(this.viewAngle[0]) * Math.cos(this.viewAngle[1]) * this.viewDistance,
+      Math.sin(this.viewAngle[1]) * this.viewDistance + 1,
+    ]
+    cam.position = vec3.add(offsetPosition, this.viewPosition)
+    cam.lookVector = vec3.invert(vec3.anglesToVector(this.viewAngle[0], this.viewAngle[1]))
+    cam.updateMatrices()
   }
 
   resetAnimations() {
-    this.animState = this.state.elements.map(e => this.defaultAnimation())
-  }
-
-  advanceAnimations() {
-    const MOVE_LINEAR_SPEED = 0.07
-    const GRAVITY = -0.02
-    const MOVE_FRICTION_TIME = 15
-    const MOVE_FRICTION_FRICTION = 0.005
-    const MOVE_FRICTION_THRESHOLD = 0.02
-    const SPIN_FRICTION = 0.04
-    const MOVE_SHRINK_RATE = 0.1
-    const LASER_SHRINK_RATE = 0.004
-    const ROTATE_LINEAR_SPEED = 0.1
-
-    for (let i = 0; i < this.animState.length; i ++) {
-      const anim = this.animState[i]
-
-      // Linear movement (such as from conveyor belts)
-      if (anim.moveType === 'linear') {
-        // If this is already really close, end the animation
-        const delta = vec3.subtract(anim.endPosition, anim.position)
-        if (vec3.magnitude(delta) < MOVE_LINEAR_SPEED) {
-          anim.moveType = 'none'
-        }
-        // Otherwise, move toward it at a constant velocity
-        else {
-          const vel = vec3.scale(vec3.normalize(delta), MOVE_LINEAR_SPEED)
-          anim.position = vec3.add(anim.position, vel)
-        }
-      }
-
-      // Friction movement (such as from fans)
-      if (anim.moveType === 'friction') {
-        // Find distance between start and end
-        const delta = vec3.subtract(anim.endPosition, anim.position)
-
-        // If velocity is at zero, we've just started. So set initial values.
-        // Initial speed is calculated such that the animation will complete in MOVE_FRICTION_TIME frames
-        if (anim.speed === 0) {
-          anim.speed = (vec3.magnitude(delta) - (0.5 * (-MOVE_FRICTION_FRICTION) * Math.pow(MOVE_FRICTION_TIME, 2))) / MOVE_FRICTION_TIME
-        }
-
-        // If this is already really close, end the animation
-        if (vec3.magnitude(delta) < MOVE_FRICTION_THRESHOLD) {
-          anim.moveType = 'none'
-        }
-
-        // Otherwise, move toward it
-        else {
-          anim.speed -= MOVE_FRICTION_FRICTION
-          const vel = vec3.scale(vec3.normalize(delta), anim.speed)
-          anim.position = vec3.add(anim.position, vel)
-        }
-      }
-
-      // Falling movement
-      if (anim.moveType === 'fall' || anim.moveType === 'deliver') {
-        // Accelerate and move
-        anim.speed += GRAVITY
-        anim.position[2] += anim.speed
-
-        // If we've hit the ground, end the animation
-        if (anim.position[2] <= anim.endPosition[2]) {
-          // Play a sound effect
-          if (Math.abs(anim.speed) > Math.abs(GRAVITY * 5) && anim.moveType !== 'deliver') {
-            soundmanager.playSound("thump")
-          }
-
-          anim.moveType = 'none'
-        }
-      }
-
-      // Shrinking when falling into a chute
-      if (anim.moveType === 'deliver') {
-        // Get smaller the closer we get to our target
-        const dist = vec3.magnitude(vec3.subtract(anim.position, anim.endPosition))
-        anim.scale = u.map(dist, 0, 1.0, 0, 1.0, true)
-      }
-
-      // Shrinking from a laser
-      if (anim.moveType === 'shrink') {
-        // If we've hit zero, end the animation
-        anim.scale -= MOVE_SHRINK_RATE
-
-        if (anim.scale <= 0) {
-          anim.moveType = 'none'
-        }
-      }
-
-      // Rotator rotating
-      if (anim.moveType === 'rotate' || anim.moveType === 'rotateShrink') {
-        // If this is already really close, end the animation
-        const dist = vec2.angleDistance(anim.rotation, anim.endRotation)
-        if (dist < ROTATE_LINEAR_SPEED) {
-          anim.moveType = 'none'
-          anim.scale = 1.0
-        }
-        // Otherwise, move toward it at a constant velocity
-        else {
-          anim.rotation = vec2.lerpAngles(anim.rotation, anim.endRotation, ROTATE_LINEAR_SPEED/dist)
-
-          // Object rotating
-          // Scale element down so its rotation doesn't cause it to intersect with adjacent tiles
-          const angleScale = Math.max(Math.abs(Math.cos(anim.rotation + Math.PI/4)), Math.abs(Math.sin(anim.rotation + Math.PI/4)))
-          const scale = (1/angleScale) * 0.7071
-          let heightAdjust = (2*anim.shrinkHeight)
-          if (anim.moveType === 'rotateShrink') {
-            anim.scale = scale
-            heightAdjust ++
-          }
-
-          // Move the element downward to counteract rotateShrink shrinking
-          anim.position = [...anim.endPosition]
-          anim.position[2] -= ((1-scale)/2) * heightAdjust
-        }
-      }
-
-      // Fan spinning
-      if (anim.spinSpeed > 0) {
-        anim.spinSpeed *= 1.0-SPIN_FRICTION
-        anim.spinAngle = (anim.spinAngle + anim.spinSpeed) % (Math.PI*2)
-      }
-
-      // Texture scrolling
-      if (anim.scrollTime > 0) {
-        anim.scrollTime -= 1
-        anim.scrollPosition += MOVE_LINEAR_SPEED
-      }
-
-      // Laser beam
-      if (anim.laserThickness > 0) {
-        anim.laserThickness -= Math.max(0, LASER_SHRINK_RATE)
+    // Kill all existing visual representations
+    for (const thing of game.getThings()) {
+      if (thing instanceof Element) {
+        thing.isDead = true
       }
     }
+
+    // Create visual representations for each thing
+    this.state.elements.forEach(element => {
+      game.addThing(new Element(element))
+    })
   }
 
   isAnimationBlocking() {
-    for (const anim of this.animState) {
-      if (anim.moveType != 'none') {
-        return true
-      }
+    return game.getThings().filter(x => x.anim && x.anim.moveType !== 'none').length > 0
+  }
+
+  moveable(element) {
+    if (element.destroyed) {
+      return false
+    }
+    if (['crate', 'fan', 'laser'].includes(element.type)) {
+      return true
     }
     return false
   }
 
-  moveable(type) {
-    return ['crate', 'fan', 'laser'].includes(type)
+  pushable(element) {
+    if (element.destroyed) {
+      return false
+    }
+    if (['crate', 'fan', 'laser'].includes(element.type)) {
+      return true
+    }
+    return false
   }
 
-  pushable(type) {
-    return ['crate', 'fan', 'laser'].includes(type)
-  }
-
-  mustShrinkWhenRotating(type) {
-    return !(['rotator', 'fan', 'laser'].includes(type))
-  }
-
-  angleToRotation(angle) {
-    return -(angle || 0) * (Math.PI/2)
+  mustShrinkWhenRotating(element) {
+    if (['rotator', 'fan', 'laser'].includes(element.type) && !element.scaffold) {
+      return false
+    }
+    return true
   }
 
   getElementAt(pos) {
@@ -561,13 +417,10 @@ export default class Board extends Thing {
     // Mark moveable elements as undecided
     for (const i in this.state.elements) {
       const element = this.state.elements[i]
-      if (this.moveable(element.type)) {
+      if (this.moveable(element)) {
         states[i].decision = 'undecided'
       }
     }
-
-    // Direction to move vector
-    const dirs = [[0, 1, 0], [1, 0, 0], [0, -1, 0], [-1, 0, 0]]
 
     // Iterate until all elements have decided how to move
     let maxIter = 50
@@ -585,11 +438,11 @@ export default class Board extends Thing {
             // If on top of an active conveyor
             if (this.state.elements[below].type === 'conveyor' && this.state.elements[below].color === color && !this.state.elements[below].destroyed) {
               // Set move direction
-              const moveDir = this.state.elements[below].angle || 0
+              const moveDir = this.state.elements[below].direction
               states[i].moveDirection = moveDir
 
               // Get position it wants to move into
-              const moveSpace = vec3.add(element.position, dirs[moveDir])
+              const moveSpace = vec3.add(element.position, vec3.directionToVector(moveDir))
               states[i].movePosition = moveSpace
               // console.log(element.letter + " is moving into " + moveSpace)
 
@@ -604,7 +457,7 @@ export default class Board extends Thing {
               states[i].moveDirection = moveDir
 
               // Get position it wants to move into
-              const moveSpace = vec3.add(element.position, dirs[moveDir])
+              const moveSpace = vec3.add(element.position, vec3.directionToVector(moveDir))
               states[i].movePosition = moveSpace
 
               // Check if the space to move into is (or has been claimed as) occupied
@@ -639,10 +492,8 @@ export default class Board extends Thing {
     // Advance state based on decisions
     for (let i = 0; i < this.state.elements.length; i ++) {
       if (states[i].decision === 'moving') {
-        // Animation
-        this.animState[i].moveType = 'linear'
-        this.animState[i].position = [...this.state.elements[i].position]
-        this.animState[i].endPosition = [...states[i].movePosition]
+        // Start animation
+        this.getElementThing(this.state.elements[i]).startAnimateLinear(this.state.elements[i].position, states[i].movePosition)
 
         // Move the element's position
         this.state.elements[i].position = [...states[i].movePosition]
@@ -652,7 +503,7 @@ export default class Board extends Thing {
 
       // Conveyor Belt Scroll Animation
       if (this.state.elements[i].type === 'conveyor' && this.state.elements[i].color === color) {
-        this.animState[i].scrollTime = 14
+        this.getElementThing(this.state.elements[i]).startAnimateScroll()
       }
     }
 
@@ -669,7 +520,7 @@ export default class Board extends Thing {
       return true
     }
     // Base case: element is not pushable
-    if (!this.pushable(this.state.elements[index].type)) {
+    if (!this.pushable(this.state.elements[index])) {
       return false
     }
 
@@ -678,11 +529,8 @@ export default class Board extends Thing {
 
     // If the result is that we can push this element, do it
     if (canPush) {
-      // Animation
-      this.animState[index].moveType = 'friction'
-      this.animState[index].position = [...this.state.elements[index].position]
-      this.animState[index].endPosition = vec3.add(position, direction)
-      this.animState[index].speed = 0
+      // Start animation
+      this.getElementThing(this.state.elements[index]).startAnimateFriction(this.state.elements[index].position, vec3.add(position, direction))
 
       // Move
       this.state.elements[index].position = vec3.add(position, direction)
@@ -692,11 +540,8 @@ export default class Board extends Thing {
     return canPush
   }
 
-  advanceFan(color, angle) {
+  advanceFan(color, direction) {
     // To simplify logic, we do each fan direction separately
-
-    // Direction to move vector
-    const dirs = [[0, 1, 0], [1, 0, 0], [0, -1, 0], [-1, 0, 0]]
 
     // Sound
     let didPushSomething = false
@@ -705,17 +550,17 @@ export default class Board extends Thing {
     // Iterate over fans...
     for (const i in this.state.elements) {
       const element = this.state.elements[i]
-      // If this is a fan of the right color and angle...
-      if (element.type === 'fan' && element.angle === angle && element.color === color && !element.destroyed) {
+      // If this is a fan of the right color and direction...
+      if (element.type === 'fan' && element.direction === direction && element.color === color && !element.destroyed) {
         // Find elements in this fan's line
         let pos = [...element.position]
         while (vec2.magnitude(pos) < 50) {
-          pos = vec3.add(pos, dirs[angle])
+          pos = vec3.add(pos, vec3.directionToVector(direction))
           const index = this.getElementAt(pos)
 
           // If this is a moveable element, try to push it
           if (index !== -1) {
-            let result = this.fanPushElement(pos, dirs[angle])
+            let result = this.fanPushElement(pos, vec3.directionToVector(direction))
             if (result === true) {
               didPushSomething = true
             }
@@ -724,7 +569,7 @@ export default class Board extends Thing {
         }
 
         // Fan spinning animation
-        this.animState[i].spinSpeed = 0.6
+        this.getElementThing(this.state.elements[i]).startAnimateSpin(0.6)
         didSpin = true
       }
     }
@@ -746,29 +591,40 @@ export default class Board extends Thing {
     }
 
     // Rotate it
-    let angle = this.state.elements[index].angle || 0
-    let newAngle = angle
+    let direction = this.state.elements[index].direction
+    let newDirection = direction
     if (rotateDirection === 'ccw') {
       // State
-      newAngle ++
-      if (newAngle > 3) newAngle = 0;
-      this.state.elements[index].angle = newAngle
+      const mapping = {
+        north: 'west',
+        west: 'south',
+        south: 'east',
+        east: 'north',
+      }
+      newDirection = mapping[direction]
+      this.state.elements[index].direction = newDirection
     }
     else {
       // State
-      newAngle --
-      if (newAngle < 0) newAngle = 3;
-      this.state.elements[index].angle = newAngle
+      const mapping = {
+        north: 'east',
+        west: 'north',
+        south: 'west',
+        east: 'south',
+      }
+      newDirection = mapping[direction]
+      this.state.elements[index].direction = newDirection
     }
 
     // Animation
-    const shrink = this.mustShrinkWhenRotating(this.state.elements[index].type) || this.state.elements[index].scaffold
-    this.animState[index].moveType = shrink ? 'rotateShrink' : 'rotate'
-    this.animState[index].rotation = this.angleToRotation(angle)
-    this.animState[index].endRotation = this.angleToRotation(newAngle)
-    this.animState[index].position = this.state.elements[index].position
-    this.animState[index].endPosition = this.state.elements[index].position
-    this.animState[index].shrinkHeight = shrinkHeight
+    const shrink = this.mustShrinkWhenRotating(this.state.elements[index])
+    this.getElementThing(this.state.elements[index]).startAnimateRotate(
+      this.state.elements[index].position,
+      vec2.vectorToAngle(vec2.directionToVector(direction)),
+      vec2.vectorToAngle(vec2.directionToVector(newDirection)),
+      shrinkHeight,
+      shrink,
+    )
   }
 
   rotatorRotate(position, rotateDirection, shrinkHeight, height) {
@@ -780,7 +636,7 @@ export default class Board extends Thing {
     }
     // Base case: element is not moveable
     // Ignore this base case if height <= 1 since the rotator can always rotate itself and the element on top of it
-    if (!this.moveable(this.state.elements[index].type) && height > 1) {
+    if (!this.moveable(this.state.elements[index]) && height > 1) {
       return false
     }
 
@@ -788,7 +644,7 @@ export default class Board extends Thing {
     this.rotatorRotateElement(position, rotateDirection, shrinkHeight)
 
     // Track stack height
-    const shrink = this.mustShrinkWhenRotating(this.state.elements[index].type) || this.state.elements[index].scaffold
+    const shrink = this.mustShrinkWhenRotating(this.state.elements[index])
     if (shrink) {
       shrinkHeight ++
     }
@@ -835,7 +691,7 @@ export default class Board extends Thing {
     // Mark moveable elements as undecided
     for (const i in this.state.elements) {
       const element = this.state.elements[i]
-      if (this.moveable(element.type)) {
+      if (this.moveable(element)) {
         states[i].decision = 'undecided'
       }
     }
@@ -853,15 +709,17 @@ export default class Board extends Thing {
           // Check what this element is sitting on top of
           const below = this.getElementDownward([...element.position])
           if (below !== -1) {
+            // How far below the below element is
+            const belowDistance = element.position[2] - this.state.elements[below].position[2]
+
             // If on top of a chute, destroy self
             if (this.state.elements[below].type === 'chute') {
               states[i].decision = 'moving'
               states[i].movePosition = [...states[below].movePosition]
               states[i].fellInChute = this.state.elements[below].letter
             }
-
             // If on top of a decided element, move down to it
-            else if (states[below].decision === 'blocked' || states[below].decision === 'moving') {
+            else if ((states[below].decision === 'blocked' && belowDistance > 1) || states[below].decision === 'moving') {
               states[i].decision = 'moving'
               states[i].movePosition = vec3.add(states[below].movePosition, [0, 0, 1])
               if (states[below].movePosition[2] <= this.state.floorHeight) {
@@ -869,10 +727,13 @@ export default class Board extends Thing {
               }
               continue
             }
-
             // If on top of undecided element, wait for that element to decide
             else if (states[below].decision === 'undecided') {
               continue
+            }
+            // Else, this element is blocked
+            else {
+              states[i].decision = 'blocked'
             }
           }
           else {
@@ -887,57 +748,52 @@ export default class Board extends Thing {
     }
 
     // Advance state based on decisions
-    let didCollect = false
-    let didFail = false
     for (let i = 0; i < this.state.elements.length; i ++) {
       if (states[i].decision === 'moving') {
-        // Animation
-        this.animState[i].moveType = 'fall'
-        this.animState[i].position = [...this.state.elements[i].position]
-        this.animState[i].endPosition = [...states[i].movePosition]
-        this.animState[i].speed = 0
-
         // If fell into the void, make it disappear
-        if (this.animState[i].endPosition[2] <= this.state.floorHeight && !this.state.elements[i].destroyed) {
-          this.animState[i].moveType = 'deliver'
+        if (states[i].movePosition[2] <= this.state.floorHeight && !this.state.elements[i].destroyed) {
           this.state.elements[i].destroyed = true
         }
 
         // If it fell in a chute, special rules apply
         if (states[i].fellInChute) {
+          // Animation
+          this.getElementThing(this.state.elements[i]).startAnimateFall(
+            [...this.state.elements[i].position],
+            [...states[i].movePosition],
+            true,
+          )
+
+          // Move
           this.state.elements[i].destroyed = true
           this.state.elements[i].position = [0, 0, this.state.floorHeight]
           if (this.state.elements[i].letter === states[i].fellInChute) {
             this.state.cratesDelivered ++
-            didCollect = true
+            soundmanager.playSound("collect", 0.3)
           }
           else {
-            didFail = true
+            soundmanager.playSound("fail", 0.3)
           }
-
-          this.animState[i].moveType = 'deliver'
         }
         // Otherwise, just move it where it's headed
         else {
+          // Animation
+          this.getElementThing(this.state.elements[i]).startAnimateFall(
+            [...this.state.elements[i].position],
+            [...states[i].movePosition],
+            this.state.elements[i].destroyed
+          )
+
+          // Move
           this.state.elements[i].position = states[i].movePosition
         }
       }
-    }
-
-    if (didCollect) {
-      soundmanager.playSound("collect", 0.3)
-    }
-    if (didFail) {
-      soundmanager.playSound("fail", 0.3)
     }
   }
 
   advanceLaser(color) {
     // Track which elements are destroyed
     const destroyed = this.state.elements.map(_ => false)
-
-    // Direction to move vector
-    const dirs = [[0, 1, 0], [1, 0, 0], [0, -1, 0], [-1, 0, 0]]
 
     // Sound effects
     let didShootLaser = false
@@ -949,14 +805,13 @@ export default class Board extends Thing {
       // If this is a laser of the right color...
       if (element.type === 'laser' && element.color === color && !element.destroyed) {
         // Laser animation
-        this.animState[i].laserLength = 50
-        this.animState[i].laserThickness = 0.04
+        this.getElementThing(element).startAnimateLaser(50)
         didShootLaser = true
 
-        // Find elements in this fan's line
+        // Find elements in this laser's line
         let pos = [...element.position]
         while (vec2.magnitude(pos) < 50) {
-          pos = vec3.add(pos, dirs[element.angle])
+          pos = vec3.add(pos, vec3.directionToVector(element.direction))
           const index = this.getElementAt(pos)
 
           // If this is a moveable element, mark it for destruction
@@ -964,7 +819,7 @@ export default class Board extends Thing {
             destroyed[index] = true
 
             // Animation
-            this.animState[i].laserLength = vec2.magnitude(vec3.subtract(pos, element.position))
+            this.getElementThing(element).startAnimateLaser(vec2.magnitude(vec3.subtract(pos, element.position)))
 
             didHitLaser = true
 
@@ -983,16 +838,18 @@ export default class Board extends Thing {
 
     for (const i in this.state.elements) {
       if (destroyed[i]) {
-        // Animation
-        this.animState[i].moveType = 'shrink'
-        this.animState[i].scale = 1.0
-        this.animState[i].position = [...this.state.elements[i].position]
+        // Start animation
+        this.getElementThing(this.state.elements[i]).startAnimateShrink(this.state.elements[i].position)
 
         // State update
         this.state.elements[i].destroyed = true
         this.state.elements[i].position = [0, 0, this.state.floorHeight]
       }
     }
+  }
+
+  getElementThing(element) {
+    return game.getThings().filter(x => x.elementReference === element)?.[0]
   }
 
   postDraw () {
@@ -1011,10 +868,6 @@ export default class Board extends Thing {
 
   draw () {
     const { ctx } = game
-    // Draw each of the game elements
-    for (let i = 0; i < this.state.elements.length; i ++) {
-      this.drawElement(this.state.elements[i], this.animState[i])
-    }
 
     // Draw the control HUD
     {
@@ -1144,156 +997,11 @@ export default class Board extends Thing {
       ctx.font = 'italic 50px Times New Roman'
       ctx.textAlign = 'center'
       const str = "Error: " + this.errorMessage
-      ctx.fillStyle = u.colorToString(0.4, 0, 0, u.map(this.errorTime, 0, 60, 0, 1, true))
+      ctx.fillStyle = u.colorToString([0.4, 0, 0, u.map(this.errorTime, 0, 60, 0, 1, true)])
       ctx.fillText(str, 0, 0)
-      ctx.fillStyle = u.colorToString(1, 1, 1, u.map(this.errorTime, 0, 60, 0, 1, true))
+      ctx.fillStyle = u.colorToString([1, 1, 1, u.map(this.errorTime, 0, 60, 0, 1, true)])
       ctx.fillText(str, 4, -4)
       ctx.restore()
-    }
-  }
-
-  // Draws one game element
-  drawElement (elementState, animState) {
-    // Don't render if destroyed
-    if (elementState.destroyed && animState.moveType !== 'deliver' && animState.moveType !== 'shrink') {
-      return
-    }
-
-    // Shader
-    let rShader = assets.shaders.shaded
-
-    // Color
-    let rColor = this.colorMap[elementState.color]
-    if (elementState.type === 'fan' || elementState.type === 'rotator') {
-      rColor = [0.4, 0.4, 0.4, 1]
-    }
-
-    // Texture
-    let rTexture = assets.textures['uv_' + elementState.type]
-    if (elementState.type === 'crate' || elementState.type === 'chute') {
-      rTexture = assets.textures['uv_' + elementState.type + "_" + (elementState.letter || '')]
-    }
-
-    // Mesh
-    let rMesh = assets.meshes[elementState.type]
-
-    // Position
-    let rPos = elementState.position
-    if (animState.moveType !== 'none') {
-      rPos = animState.position
-    }
-
-    // Scale
-    let rScale = [1.0, 1.0, 1.0]
-    if (animState.moveType !== 'none') {
-      rScale = [animState.scale, animState.scale, animState.scale]
-    }
-    if (elementState.type === 'rotator' && elementState.rotateDirection === 'ccw') {
-      rScale[0] *= -1
-    }
-
-    // Angle
-    let rAngle = this.angleToRotation(elementState.angle || 0)
-    if (animState.moveType === 'rotate' || animState.moveType === 'rotateShrink') {
-      rAngle = animState.rotation
-    }
-
-    // Perform the draw operations
-    gfx.setShader(rShader)
-    game.getCamera3D().setUniforms()
-    gfx.set('color', rColor || [1, 1 ,1, 1])
-    gfx.set('scroll', 0)
-    gfx.setTexture(rTexture || assets.textures.square)
-    gfx.set('modelMatrix', mat.getTransformation({
-      translation: rPos,
-      rotation: [Math.PI/2, 0, rAngle],
-      scale: rScale
-    }))
-    gfx.drawMesh(rMesh || assets.meshes.cube)
-
-    // If this is a fan, render the blade as well
-    if (elementState.type === 'fan') {
-      let offset = vec2.rotate(0, -0.1, rAngle + Math.PI)
-      offset.push(0.1)
-
-      const spin = animState.spinAngle
-      gfx.setShader(rShader)
-      game.getCamera3D().setUniforms()
-      gfx.set('color', this.colorMap[elementState.color])
-      gfx.set('scroll', 0)
-      gfx.setTexture(rTexture || assets.textures.square)
-      gfx.set('modelMatrix', mat.getTransformation({
-        translation: vec3.add(rPos, offset),
-        rotation: [Math.PI/2, spin, rAngle + Math.PI],
-        scale: rScale
-      }))
-      gfx.drawMesh(assets.meshes.fanBlade)
-    }
-
-    // If this is a rotator, render the blade as well
-    if (elementState.type === 'rotator') {
-      gfx.setShader(rShader)
-      game.getCamera3D().setUniforms()
-      gfx.set('color', this.colorMap[elementState.color])
-      gfx.set('scroll', 0)
-      gfx.setTexture(assets.textures.square)
-      gfx.set('modelMatrix', mat.getTransformation({
-        translation: rPos,
-        rotation: [Math.PI/2, 0, rAngle],
-        scale: rScale
-      }))
-      gfx.drawMesh(assets.meshes.rotatorArrows)
-    }
-
-    // If this is a conveyor, render the belt as well
-    if (elementState.type === 'conveyor') {
-      const scroll = -animState.scrollPosition
-      gfx.setShader(rShader)
-      game.getCamera3D().setUniforms()
-      gfx.set('color', [1, 1, 1, 1])
-      gfx.set('scroll', scroll)
-      gfx.setTexture(assets.textures.uv_conveyorBelt)
-      gfx.set('modelMatrix', mat.getTransformation({
-        translation: rPos,
-        rotation: [Math.PI/2, 0, rAngle],
-        scale: rScale
-      }))
-      gfx.drawMesh(assets.meshes.conveyorBelt)
-    }
-
-    // Built-in scaffolding
-    if (elementState.scaffold) {
-      const rfTexture = assets.textures["uv_" + elementState.type + "Scaffold"] || assets.textures.uv_scaffold
-      const rfMesh = assets.meshes[elementState.type + "Scaffold"] || assets.meshes.scaffold
-      gfx.setShader(rShader)
-      game.getCamera3D().setUniforms()
-      gfx.set('color', [1, 1, 1, 1])
-      gfx.set('scroll', 0)
-      gfx.setTexture(rfTexture)
-      gfx.set('modelMatrix', mat.getTransformation({
-        translation: rPos,
-        rotation: [Math.PI/2, 0, rAngle],
-        scale: rScale
-      }))
-      gfx.drawMesh(rfMesh)
-    }
-
-    // If this is a laser, render the beam as well
-    if (elementState.type === 'laser') {
-      let offset = vec2.rotate(0, animState.laserLength/2, rAngle)
-      offset.push(0)
-
-      gfx.setShader(assets.shaders.default)
-      game.getCamera3D().setUniforms()
-      gfx.set('color', rColor)
-      gfx.set('scroll', 0)
-      gfx.setTexture(assets.textures.square)
-      gfx.set('modelMatrix', mat.getTransformation({
-        translation: vec3.add(rPos, offset),
-        rotation: [Math.PI/2, 0, rAngle + Math.PI/2],
-        scale: [animState.laserLength, animState.laserThickness, animState.laserThickness]
-      }))
-      gfx.drawMesh(assets.meshes.cube)
     }
   }
 }

@@ -10,31 +10,31 @@ export const data = {
             type: 'conveyor',
             position: [0, 0, -1],
             color: 'red',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'conveyor',
             position: [0, 1, -1],
             color: 'red',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'conveyor',
             position: [0, 2, -1],
             color: 'green',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'conveyor',
             position: [0, 3, -1],
             color: 'green',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'conveyor',
             position: [0, 4, -1],
             color: 'green',
-            angle: 2,
+            direction: "north",
         },
 
         // Side Conveyor
@@ -42,19 +42,19 @@ export const data = {
             type: 'conveyor',
             position: [1, 1, -1],
             color: 'red',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [2, 1, -1],
             color: 'red',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [3, 1, -1],
             color: 'red',
-            angle: 3,
+            direction: "west",
         },
 
         // Side Fan
@@ -65,7 +65,7 @@ export const data = {
         {
             type: 'fan',
             position: [4, 1, 1],
-            angle: 3,
+            direction: "west",
             color: 'green',
         },
 
@@ -74,37 +74,37 @@ export const data = {
             type: 'conveyor',
             position: [0, -1, -2],
             color: 'red',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [1, -1, -2],
             color: 'red',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [2, -1, -2],
             color: 'red',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [3, -1, -2],
             color: 'red',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [4, -1, -2],
             color: 'red',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [5, -1, -2],
             color: 'red',
-            angle: 1,
+            direction: "east",
         },
 
         // End Platforms
@@ -134,31 +134,31 @@ export const data = {
             type: 'fan',
             position: [1, 0, -1],
             color: 'blue',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'fan',
             position: [2, 0, -1],
             color: 'blue',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'fan',
             position: [3, 0, -1],
             color: 'blue',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'fan',
             position: [4, 0, -1],
             color: 'blue',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'fan',
             position: [5, 0, -1],
             color: 'blue',
-            angle: 2,
+            direction: "north",
         },
 
         // End Chutes
@@ -166,31 +166,31 @@ export const data = {
             type: 'chute',
             position: [1, -2, -2],
             letter: 'e',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'chute',
             position: [2, -2, -2],
             letter: 'd',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'chute',
             position: [3, -2, -2],
             letter: 'c',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'chute',
             position: [4, -2, -2],
             letter: 'b',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'chute',
             position: [5, -2, -2],
             letter: 'a',
-            angle: 2,
+            direction: "north",
         },
 
         // Crates
@@ -198,31 +198,31 @@ export const data = {
             type: 'crate',
             position: [0, 3, 0],
             letter: 'b',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'crate',
             position: [0, 4, 0],
             letter: 'c',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'crate',
             position: [3, 1, 0],
             letter: 'e',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'crate',
             position: [3, 1, 1],
             letter: 'a',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'crate',
             position: [3, 1, 2],
             letter: 'd',
-            angle: 2,
+            direction: "north",
         },
 
         // Misc blocks

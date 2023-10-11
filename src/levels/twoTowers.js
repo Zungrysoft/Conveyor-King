@@ -10,37 +10,37 @@ export const data = {
             type: 'conveyor',
             position: [-3, 0, 0],
             color: 'cyan',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [-2, 0, 0],
             color: 'cyan',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [-1, 0, 0],
             color: 'cyan',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [0, 0, 0],
             color: 'cyan',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [1, 0, 0],
             color: 'cyan',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [2, 0, 0],
             color: 'cyan',
-            angle: 1,
+            direction: "east",
         },
 
         // Side fan
@@ -48,7 +48,7 @@ export const data = {
             type: 'fan',
             position: [3, 0, 2],
             color: 'yellow',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'block',
@@ -64,7 +64,7 @@ export const data = {
             type: 'fan',
             position: [-2, -1, 1],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'block',
@@ -74,7 +74,7 @@ export const data = {
             type: 'fan',
             position: [2, -1, 1],
             color: 'green',
-            angle: 0,
+            direction: "south",
         },
 
         // Chutes
@@ -131,7 +131,7 @@ export const data = {
             type: 'fan',
             position: [2, 0, 4],
             color: 'blue',
-            angle: 3,
+            direction: "west",
             scaffold: true,
         },
         {

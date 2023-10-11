@@ -131,31 +131,31 @@ export const data = {
             type: 'conveyor',
             position: [-1, 1, 0],
             color: 'blue',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'conveyor',
             position: [-1, 0, 0],
             color: 'blue',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'conveyor',
             position: [-1, -1, 0],
             color: 'blue',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'conveyor',
             position: [-1, -2, 0],
             color: 'blue',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'conveyor',
             position: [-1, -3, 0],
             color: 'blue',
-            angle: 2,
+            direction: "north",
         },
 
         // Blue Conveyor Down
@@ -163,31 +163,31 @@ export const data = {
             type: 'conveyor',
             position: [1, -1, 0],
             color: 'blue',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 0, 0],
             color: 'blue',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 1, 0],
             color: 'blue',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 2, 0],
             color: 'blue',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 3, 0],
             color: 'blue',
-            angle: 0,
+            direction: "south",
         },
 
         // Chutes
@@ -195,13 +195,13 @@ export const data = {
             type: 'chute',
             position: [1, 4, 0],
             letter: 'b',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'chute',
             position: [-1, -4, 0],
             letter: 'a',
-            angle: 2,
+            direction: "north",
         },
 
         // Laser back
@@ -225,7 +225,7 @@ export const data = {
             type: 'laser',
             position: [-5, -3, 0],
             color: 'red',
-            angle: 1,
+            direction: "east",
         },
 
         // Laser front
@@ -249,7 +249,7 @@ export const data = {
             type: 'laser',
             position: [5, 3, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
 
     ],

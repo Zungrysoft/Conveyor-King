@@ -16,6 +16,7 @@ import * as rotatorTest from './levels/rotatorTest.js'
 export function getLevel(lvl) {
   // Retrieve level data
   const levelList = [
+    intro,
     rotatorTest,
     fanIntro,
     stacking,
@@ -39,7 +40,33 @@ export function getLevel(lvl) {
     level1,
     level1,
   ]
-  const ret = JSON.parse(JSON.stringify(levelList[lvl-1].data))
+  let ret = JSON.parse(JSON.stringify(levelList[lvl-1].data))
+
+  // Clean up elements
+  for (const element of ret.elements) {
+    element.type = element.type || 'block'
+    element.direction = element.direction || 'south'
+    element.color = element.color || ''
+    element.letter = element.letter || ''
+  }
+
+  // Make sure all elements have positions and that none overlap
+  let positionMap = {}
+  for (let i = ret.elements.length-1; i >= 0; i --) {
+    const element = ret.elements[i]
+    if (!element.position) {
+      console.warn(`Element ${element.type} has no position`)
+      ret.elements.splice(i, 1)
+    }
+    else if (positionMap[element.position]) {
+      console.warn(`Element ${element.type} at position ${element.position} overlaps with another element.`)
+      ret.elements.splice(i, 1)
+    }
+    else {
+      positionMap[element.position] = true
+    }
+  }
+
   return ret
 }
 

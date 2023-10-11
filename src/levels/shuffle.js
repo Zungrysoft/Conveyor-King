@@ -51,37 +51,37 @@ export const data = {
             type: 'conveyor',
             position: [0, -2, 0],
             color: 'red',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [1, -2, 0],
             color: 'red',
-            angle: 1,
+            direction: "east",
         },
         {
             type: 'conveyor',
             position: [2, -2, 0],
             color: 'red',
-            angle: 2,
+            direction: "north",
         },
         {
             type: 'conveyor',
             position: [2, -3, 0],
             color: 'red',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [1, -3, 0],
             color: 'red',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [0, -3, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
 
         // Conveyor Fan
@@ -89,7 +89,7 @@ export const data = {
             type: 'fan',
             position: [0, -2, 1],
             color: 'green',
-            angle: 0,
+            direction: "south",
         },
 
         // Side platform
@@ -111,19 +111,19 @@ export const data = {
             type: 'fan',
             position: [4, 0, 1],
             color: 'blue',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'fan',
             position: [4, 1, 1],
             color: 'blue',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'fan',
             position: [4, 2, 1],
             color: 'blue',
-            angle: 3,
+            direction: "west",
         },
 
         // Chutes

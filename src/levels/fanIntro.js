@@ -10,37 +10,37 @@ export const data = {
             type: 'conveyor',
             position: [0, 0, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [0, 1, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [0, 2, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [0, 3, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [0, 4, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [0, 5, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
 
         // Right row
@@ -48,37 +48,37 @@ export const data = {
             type: 'conveyor',
             position: [1, 0, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 1, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 2, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 3, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 4, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 5, 0],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
 
         // Chutes
@@ -102,7 +102,7 @@ export const data = {
             type: 'fan',
             position: [2, 4, 1],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
 
         // Crates

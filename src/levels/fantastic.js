@@ -23,43 +23,43 @@ export const data = {
         {
             type: 'fan',
             position: [3, 6, 1],
-            angle: 2,
+            direction: "north",
             color: 'blue'
         },
         {
             type: 'fan',
             position: [3, 5, 1],
-            angle: 3,
+            direction: "west",
             color: 'red'
         },
         {
             type: 'fan',
             position: [3, 4, 1],
-            angle: 0,
+            direction: "south",
             color: 'green'
         },
         {
             type: 'fan',
             position: [0, 3, 1],
-            angle: 1,
+            direction: "east",
             color: 'yellow'
         },
         {
             type: 'fan',
             position: [1, 3, 1],
-            angle: 2,
+            direction: "north",
             color: 'blue'
         },
         {
             type: 'fan',
             position: [1, 2, 1],
-            angle: 0,
+            direction: "south",
             color: 'green'
         },
         {
             type: 'fan',
             position: [2, 4, 1],
-            angle: 2,
+            direction: "north",
             color: 'cyan'
         },
 
@@ -67,7 +67,7 @@ export const data = {
         {
             type: 'laser',
             position: [5, 3, 1],
-            angle: 3,
+            direction: "west",
             color: 'blue'
         },
 

@@ -1,7 +1,7 @@
 export const data = {
     cratesRequired: 1,
     cameraDistance: 5,
-    cameraPosition: [0, 0, 6],
+    cameraPosition: [0, 0, 2],
     cameraStartAngle: [Math.PI*(2/4), Math.PI*(2/8)],
     floorHeight: -3,
     elements: [
@@ -108,7 +108,7 @@ export const data = {
             type: 'laser',
             position: [1, 0, 1],
             color: 'orange',
-            angle: 3,
+            direction: 'north',
             scaffold: true,
         },
         {
@@ -128,7 +128,7 @@ export const data = {
             type: 'laser',
             position: [0, 3, 1],
             color: 'red',
-            angle: 2,
+            direction: "north",
         },
     ],
 }

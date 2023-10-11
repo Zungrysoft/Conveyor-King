@@ -10,19 +10,19 @@ export const data = {
             type: 'conveyor',
             position: [0, 0, 2],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [0, 1, 2],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [0, 2, 2],
             color: 'red',
-            angle: 0,
+            direction: "south",
         },
 
         // Green Conveyors
@@ -30,19 +30,19 @@ export const data = {
             type: 'conveyor',
             position: [1, 0, 2],
             color: 'green',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 1, 2],
             color: 'green',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [1, 2, 2],
             color: 'green',
-            angle: 0,
+            direction: "south",
         },
 
         // Blue Conveyors
@@ -50,19 +50,19 @@ export const data = {
             type: 'conveyor',
             position: [2, 0, 2],
             color: 'blue',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [2, 1, 2],
             color: 'blue',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'conveyor',
             position: [2, 2, 2],
             color: 'blue',
-            angle: 0,
+            direction: "south",
         },
 
         // Yellow Conveyors Back Row
@@ -70,43 +70,43 @@ export const data = {
             type: 'conveyor',
             position: [-4, 3, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [-3, 3, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [-2, 3, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [-1, 3, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [0, 3, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [1, 3, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [2, 3, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
 
         // Yellow Conveyors Front Row
@@ -114,37 +114,37 @@ export const data = {
             type: 'conveyor',
             position: [-3, 4, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [-2, 4, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [-1, 4, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [0, 4, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [1, 4, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
         {
             type: 'conveyor',
             position: [2, 4, 0],
             color: 'green',
-            angle: 3,
+            direction: "west",
         },
 
 
@@ -153,7 +153,7 @@ export const data = {
             type: 'fan',
             position: [-2, 2, 2],
             color: 'blue',
-            angle: 0,
+            direction: "south",
         },
         {
             type: 'block',

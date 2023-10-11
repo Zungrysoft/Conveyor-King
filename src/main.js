@@ -1,11 +1,11 @@
-import * as game from './core/game.js'
-import * as gfx from './core/webgl.js'
+import * as game from 'game'
+import * as gfx from 'webgl'
 import Board from './board.js'
 
 game.config.width = 1920
 game.config.height = 1080
 //game.config.isWebglEnabled = false
-document.title = 'Sorting Center Savant'
+document.title = 'Conveyor King'
 
 await game.loadAssets({
   images: {

@@ -10,13 +10,13 @@ export const data = {
             type: 'conveyor',
             position: [-1, 0, 0],
             color: 'red',
-            angle: 1,
+            direction: 'east',
         },
         {
             type: 'conveyor',
             position: [-2, 0, 0],
             color: 'red',
-            angle: 1,
+            direction: 'east',
         },
 
         // Green Conveyors
@@ -24,13 +24,13 @@ export const data = {
             type: 'conveyor',
             position: [1, 0, 0],
             color: 'green',
-            angle: 3,
+            direction: 'west',
         },
         {
             type: 'conveyor',
             position: [2, 0, 0],
             color: 'green',
-            angle: 3,
+            direction: 'west',
         },
 
         // Chute
