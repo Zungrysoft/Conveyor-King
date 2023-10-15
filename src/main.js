@@ -1,6 +1,7 @@
 import * as game from 'game'
 import * as gfx from 'webgl'
 import Board from './board.js'
+import AmbientOcclusion from './ambientocclusion.js'
 
 game.config.width = 1920
 game.config.height = 1080
@@ -48,6 +49,9 @@ await game.loadAssets({
 
     shadedFrag: 'shaders/shaded.frag',
     shadedVert: 'shaders/shaded.vert',
+
+    ssaoFrag: 'shaders/ssao.frag',
+    ssaoVert: 'shaders/ssao.vert',
   },
 
   models: {
@@ -79,6 +83,10 @@ assets.shaders = {
     assets.shaderSources.shadedVert,
     assets.shaderSources.shadedFrag
   ),
+  ssao: gfx.createShader(
+    assets.shaderSources.ssaoVert,
+    assets.shaderSources.ssaoFrag
+  ),
 }
 
 assets.textures = Object.fromEntries(
@@ -98,5 +106,6 @@ game.globals.levelCompletions = {}
 game.globals.level = 1
 
 game.setScene(() => {
+  // game.addThing(new AmbientOcclusion())
   game.addThing(new Board())
 })
