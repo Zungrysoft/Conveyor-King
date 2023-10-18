@@ -9,6 +9,11 @@ varying vec3 normal;
 varying vec4 worldPosition;
 varying vec4 viewPosition;
 varying vec3 origNormal;
+
+float map(float n, float start1, float stop1, float start2, float stop2) {
+  return (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+}
+
 void main() {
   // Scrolling
   vec2 uv2 = vec2(uv.x, uv.y + scroll);
@@ -18,7 +23,11 @@ void main() {
   if (diffuse.a == 0.0) { discard; }
 
   // Apply basic shading
-  vec4 shaded = vec4(diffuse.rgb * max(normal.x, mix(0.35, 1.0, normal.z/2.0 + 0.5)), diffuse.a);
+  vec3 shadingAngle = normalize(vec3(0.5, 1.8, 3.0));
+  vec4 shaded = vec4(
+    diffuse.rgb * map(dot(normal, shadingAngle), -1.0, 1.0, 0.4, 1.0),
+    diffuse.a
+  );
 
   gl_FragColor = shaded;
 }

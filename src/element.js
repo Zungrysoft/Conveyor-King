@@ -383,6 +383,7 @@ export default class Element extends Thing {
       rotation: rotation,
       scale: scale
     }))
+    gfx.set('rotationMatrix', mat.getRotation(rotation))
     gfx.drawMesh(mesh)
   }
 }
