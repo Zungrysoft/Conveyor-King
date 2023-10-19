@@ -24,7 +24,7 @@ export default class Board extends Thing {
   viewPosition = [0, 0, 0]
   time = 0
   controlMap = {}
-  lastControlTime = 0
+  lastControlTime = -1000
 
   constructor () {
     super()
