@@ -18,21 +18,6 @@ export function drawMesh ({mesh, texture, position, rotation=[0.0, 0.0, 0.0], sc
   }))
   gfx.set('rotationMatrix', mat.getRotation(rotation))
   gfx.drawMesh(mesh)
-
-  // Draw a second time to the normal buffer
-  gfx.setFramebuffer(game.globals.normalbuffer.framebuffer)
-  gfx.setShader(assets.shaders.normal)
-  game.getCamera3D().setUniforms()
-  gfx.set('color', color)
-  gfx.set('scroll', scroll)
-  gfx.setTexture(texture)
-  gfx.set('modelMatrix', mat.getTransformation({
-    position: position,
-    rotation: rotation,
-    scale: scale
-  }))
-  gfx.set('rotationMatrix', mat.getRotation(rotation))
-  gfx.drawMesh(mesh)
 }
 
 export default class Renderer extends Thing {
@@ -55,15 +40,11 @@ export default class Renderer extends Thing {
     gfx.setTexture(game.globals.framebuffer.texture, 0)
     gfx.set('depthTexture', 1, 'int')
     gfx.setTexture(game.globals.framebuffer.depthTexture, 1)
-    gfx.set('normalTexture', 2, 'int')
-    gfx.setTexture(game.globals.normalbuffer.texture, 2)
     game.getCamera3D().setUniforms()
     gfx.drawScreen()
 
     // Clear frame buffers
     gfx.setFramebuffer(game.globals.framebuffer.framebuffer)
-    gfx.clearFramebuffer()
-    gfx.setFramebuffer(game.globals.normalbuffer.framebuffer)
     gfx.clearFramebuffer()
   }
 }

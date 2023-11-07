@@ -50,9 +50,6 @@ await game.loadAssets({
     shadedVert: 'shaders/shaded.vert',
     shadedFrag: 'shaders/shaded.frag',
 
-    normalVert: 'shaders/normal.vert',
-    normalFrag: 'shaders/normal.frag',
-
     screenVert: 'shaders/screen.vert',
     screenFrag: 'shaders/screen.frag',
   },
@@ -84,10 +81,6 @@ assets.shaders = {
   shaded: gfx.createShader(
     assets.shaderSources.shadedVert,
     assets.shaderSources.shadedFrag
-  ),
-  normal: gfx.createShader(
-    assets.shaderSources.normalVert,
-    assets.shaderSources.normalFrag
   ),
   screen: gfx.createShader(
     assets.shaderSources.screenVert,

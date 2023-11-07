@@ -2,7 +2,6 @@ precision highp float;
 
 uniform sampler2D colorTexture;
 uniform sampler2D depthTexture;
-uniform sampler2D normalTexture;
 uniform mat4 projectionMatrix;
 
 varying vec2 vTexCoord;
@@ -75,9 +74,6 @@ vec3 randomInSphere(vec2 seed) {
 
     vec3 point = r * vec3(sin(phi) * cos(theta), sin(phi) * sin(theta), cos(phi));
 
-    // Invert point if it's on the wrong half of the hemisphere
-    // point = (dot(point, normal) < 0.0) ? -point : point;
-
     return point;
 }
 
@@ -86,10 +82,10 @@ vec3 randomPosition(vec3 position, vec2 uv) {
 }
 
 // Function to calculate the SSAO factor
-float computeSSAO(vec2 uv, vec3 position, vec3 normal) {
+float computeSSAO(vec2 uv, vec3 position) {
   vec2 uv2 = uv * 2.0 - 1.0;
   float occlusion = 0.0;
-  const int samples = 64;
+  const int samples = 256;
   for (int i = 0; i < samples; i++) {
     // Sampled position
     vec3 samplePosition = randomPosition(position, uv + float(i));
@@ -110,14 +106,18 @@ float computeSSAO(vec2 uv, vec3 position, vec3 normal) {
 }
 
 void main() {
-  vec3 normal = texture2D(normalTexture, vTexCoord).rgb * 2.0 - 1.0;
   float depth = getDepth(vTexCoord);
   vec3 position = getViewPosition(vTexCoord, depth);
-  float ao = computeSSAO(vTexCoord, position, normal);
+  float ao = computeSSAO(vTexCoord, position);
 
   vec4 color = texture2D(colorTexture, vTexCoord);
   vec3 baseColor = color.rgb * (1.2 - ao);
-  float paletteRange = 20.0;
-  vec3 palettizedColor = floor(baseColor * paletteRange) / paletteRange;
+  float paletteRange = 12.0;
+  float exponent = 0.5;
+  vec3 palettizedColor = vec3(
+    pow(floor(pow(baseColor.r, exponent) * paletteRange) / paletteRange, 1.0 / exponent),
+    pow(floor(pow(baseColor.g, exponent) * paletteRange) / paletteRange, 1.0 / exponent),
+    pow(floor(pow(baseColor.b, exponent) * paletteRange) / paletteRange, 1.0 / exponent)
+  );
   gl_FragColor = vec4(palettizedColor, color.a);
 }
