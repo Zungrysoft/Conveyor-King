@@ -12,10 +12,10 @@ import * as laserIntro from './levels/laserIntro.js'
 import * as simpleFans from './levels/simpleFans.js'
 import * as twoTowers from './levels/twoTowers.js'
 import * as rotatorTest from './levels/rotatorTest.js'
+import * as doubleZap from './levels/doubleZap.js'
 
 const LEVEL_LIST = [
   intro,
-  rotatorTest,
   fanIntro,
   stacking,
   fanPushesFan,
@@ -27,6 +27,7 @@ const LEVEL_LIST = [
   twoTowers,
   plinko,
   zapYourProblems,
+  doubleZap,
 ]
 
 export function getLevel(lvl) {

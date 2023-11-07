@@ -150,47 +150,30 @@ export function drawMesh (mesh, drawType = 'triangles') {
 
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
   for (const form of format) {
-    gl.vertexAttribPointer(
-      gl.getAttribLocation(shader, form.name),
-      form.count,
-      form.what,
-      false, // do not normalize
-      byteStride,
-      offset
-    )
-    gl.enableVertexAttribArray(gl.getAttribLocation(shader, form.name))
+    const location = gl.getAttribLocation(shader, form.name)
+    if (location !== -1) {
+      gl.vertexAttribPointer(
+        location,
+        form.count,
+        form.what,
+        false, // do not normalize
+        byteStride,
+        offset
+      )
+      gl.enableVertexAttribArray(location)
+    }
     offset += byteOffset(form)
   }
 
   gl.drawArrays(gl[drawType.toUpperCase()], 0, verts.length / stride)
 }
 
-const quadScreenVerts = new Float32Array([
-  -1,  1,
-  -1, -1,
-   1, -1,
-   1,  1
-]);
-
 /**
  * Draws a shader over the entire screen.
  */
 export function drawScreen() {
-  const { gl } = game
-  const shader = currentShader
-
-  // Create a full-screen quad
-  const quadVertexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, quadVertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, quadScreenVerts, gl.STATIC_DRAW);
-  
-  // Set up the vertex attributes
-  const positionLoc = gl.getAttribLocation(shader, "vertexPosition");
-  gl.enableVertexAttribArray(positionLoc);
-  gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
-  
   // Draw the quad
-  gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+  drawQuad(-1, -1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0)
 }
 
 let billboardMesh
@@ -449,13 +432,12 @@ export function modifyMesh (mesh, verts) {
  * @returns {object} - The created object that stores the framebuffer and texture.
  */
 export function createFramebuffer () {
-  // create the texture that the framebuffer renders to
   const { gl } = game
+  const { width, height } = game.config
+
+  // create the texture that the framebuffer renders to
   const texture = gl.createTexture()
   gl.bindTexture(gl.TEXTURE_2D, texture)
-  const width = game.getWidth()
-  const height = game.getHeight()
-
   gl.texImage2D(
     gl.TEXTURE_2D,
     0,
@@ -486,6 +468,91 @@ export function createFramebuffer () {
 
   return {
     framebuffer,
-    texture
+    texture,
   }
 }
+
+export function createDepthbuffer() {
+  const { gl } = game
+  const { width, height } = game.config
+
+  // create the texture that the framebuffer renders to
+  const depthTexture = gl.createTexture()
+  gl.bindTexture(gl.TEXTURE_2D, depthTexture)
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    0,
+    gl.DEPTH_COMPONENT,
+    width,
+    height,
+    0,
+    gl.DEPTH_COMPONENT,
+    gl.UNSIGNED_INT,
+    null
+  )
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+
+  // create the framebuffer, and bind the texture to it
+  const framebuffer = gl.createFramebuffer()
+  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer)
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTexture, 0)
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+
+  return {
+    framebuffer,
+    depthTexture,
+  }
+}
+
+export function createFramebufferWithDepth() {
+  const { gl } = game;
+  const { width, height } = game.config;
+
+  // Create the framebuffer
+  const framebuffer = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+  // Create the color texture
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+
+  // Create the depth texture
+  const depthTexture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, depthTexture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, width, height, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTexture, 0);
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+  return {
+    framebuffer,
+    texture,
+    depthTexture,
+  };
+}
+
+export function clearFramebuffer () {
+  const { gl } = game
+  gl.clearColor(0.25, 0.5, 1, 1)
+  gl.clearDepth(1.0)
+  gl.enable(gl.DEPTH_TEST)
+  gl.depthFunc(gl.LEQUAL)
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+  gl.enable(gl.BLEND)
+  gl.blendEquation(gl.FUNC_ADD)
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+}
+

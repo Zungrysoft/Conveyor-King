@@ -197,6 +197,10 @@ void main() {
   gl_Position = projectionMatrix * viewPosition;
 }
 `
+const ext = gl.getExtension('WEBGL_depth_texture');
+if (!ext) {
+  console.error('WEBGL_depth_texture extension not supported!');
+}
 const defaultFragSource = `
 precision mediump float;
 

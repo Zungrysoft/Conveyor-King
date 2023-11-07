@@ -35,7 +35,6 @@ export const data = {
             position: [4, 0, 10],
             direction: "west",
             color: 'red',
-            scaffold: true,
         },
 
         // Crates

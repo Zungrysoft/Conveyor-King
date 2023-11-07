@@ -3,6 +3,7 @@ import * as u from 'utils'
 import * as soundmanager from 'soundmanager'
 import * as gfx from 'webgl'
 import * as mat from 'matrices'
+import * as render from './renderer.js'
 import * as vec2 from 'vector2'
 import * as vec3 from 'vector3'
 import Thing from 'thing'
@@ -238,8 +239,8 @@ export default class Board extends Thing {
         if (adv === 'conveyor') {
           this.advanceConveyor(this.advancementData.control)
         }
-        else if (adv === 'fall') {
-          this.advanceFall()
+        else if (adv === 'rotator') {
+          this.advanceRotator(this.advancementData.control)
         }
         else if (adv === 'fan0') {
           this.advanceFan(this.advancementData.control, "east")
@@ -256,8 +257,8 @@ export default class Board extends Thing {
         else if (adv === 'laser') {
           this.advanceLaser(this.advancementData.control)
         }
-        else if (adv === 'rotator') {
-          this.advanceRotator(this.advancementData.control)
+        else if (adv === 'fall') {
+          this.advanceFall()
         }
 
         blocked = this.isAnimationBlocking()
@@ -844,26 +845,20 @@ export default class Board extends Thing {
     return game.getThings().filter(x => x.elementReference === element)?.[0]
   }
 
-  postDraw () {
-    const { ctx } = game
-
-    // Skybox
-    gfx.setShader(assets.shaders.default)
-    game.getCamera3D().setUniforms()
-    gfx.set('color', [1, 1, 1, 1])
-    gfx.setTexture(assets.textures.background)
-    gfx.set('modelMatrix', mat.getTransformation({
-      scale: [200, 200, -100],
-    }))
-    gfx.drawMesh(assets.meshes.skybox)
-  }
-
   draw () {
     const { ctx } = game
 
+    // Skybox
+    render.drawMesh({
+      mesh: assets.meshes.skybox,
+      texture: assets.textures.background,
+      position: [0.0, 0.0, 0.0],
+      scale: [-200.0, -200.0, -100.0],
+    })
+
     const drawText = (text, fontSize=40, position=[0, 0], align=[0, 0]) => {
       // Hud scale and text size
-      const hs = 1
+      const hs = 0.32
 
       // Align horizontal
       let textAlign = 'left'

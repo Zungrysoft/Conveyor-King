@@ -1,8 +1,6 @@
-import * as game from 'game'
 import * as u from 'utils'
 import * as soundmanager from 'soundmanager'
-import * as gfx from 'webgl'
-import * as mat from 'matrices'
+import * as render from './renderer.js'
 import * as vec2 from 'vector2'
 import * as vec3 from 'vector3'
 import Thing from 'thing'
@@ -289,7 +287,7 @@ export default class Element extends Thing {
     }
 
     // Draw the base model
-    this.drawMesh({
+    render.drawMesh({
       mesh: rMesh,
       texture: rTexture,
       position: rPos,
@@ -302,7 +300,7 @@ export default class Element extends Thing {
     if (this.elementReference.type === 'conveyor') {
       const scroll = -this.anim.scrollPosition
 
-      this.drawMesh({
+      render.drawMesh({
         mesh: assets.meshes.conveyorBelt,
         texture: assets.textures.uv_conveyorBelt,
         position: rPos,
@@ -318,7 +316,7 @@ export default class Element extends Thing {
       let offset = [...vec2.rotate([0, -0.1], rRot[2] + Math.PI), 0.1]
       const spin = this.anim.spinAngle
 
-      this.drawMesh({
+      render.drawMesh({
         mesh: assets.meshes.fanBlade,
         texture: assets.textures.square,
         position: vec3.add(rPos, offset),
@@ -330,7 +328,7 @@ export default class Element extends Thing {
 
     // If this is a rotator, render the arrows as well
     if (this.elementReference.type === 'rotator') {
-      this.drawMesh({
+      render.drawMesh({
         mesh: assets.meshes.rotatorArrows,
         texture: assets.textures.square,
         position: rPos,
@@ -346,7 +344,7 @@ export default class Element extends Thing {
       let offset = [...vec2.rotate([0, this.anim.laserLength/2], lrAngle - Math.PI/2), 0]
       let lrPos = vec3.add(this.anim.laserPosition, offset)
 
-      this.drawMesh({
+      render.drawMesh({
         mesh: assets.meshes.cube,
         texture: assets.textures.square,
         position: lrPos,
@@ -361,7 +359,7 @@ export default class Element extends Thing {
       const rfTexture = assets.textures["uv_" + this.elementReference.type + "Scaffold"] || assets.textures.uv_scaffold
       const rfMesh = assets.meshes[this.elementReference.type + "Scaffold"] || assets.meshes.scaffold
 
-      this.drawMesh({
+      render.drawMesh({
         mesh: rfMesh,
         texture: rfTexture,
         position: rPos,
@@ -370,21 +368,6 @@ export default class Element extends Thing {
         color: [1, 1, 1, 1],
       })
     }
-  }
-
-  drawMesh ({mesh, texture, position, rotation, scale, color, scroll=0}={}) {
-    gfx.setShader(assets.shaders.shaded)
-    game.getCamera3D().setUniforms()
-    gfx.set('color', color)
-    gfx.set('scroll', scroll)
-    gfx.setTexture(texture)
-    gfx.set('modelMatrix', mat.getTransformation({
-      position: position,
-      rotation: rotation,
-      scale: scale
-    }))
-    gfx.set('rotationMatrix', mat.getRotation(rotation))
-    gfx.drawMesh(mesh)
   }
 }
 

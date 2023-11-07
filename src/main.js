@@ -1,10 +1,10 @@
 import * as game from 'game'
 import * as gfx from 'webgl'
 import Board from './board.js'
-import AmbientOcclusion from './ambientocclusion.js'
+import Renderer from './renderer.js'
 
-game.config.width = 1920
-game.config.height = 1080
+game.config.width = 400
+game.config.height = 240
 //game.config.isWebglEnabled = false
 document.title = 'Conveyor King'
 
@@ -44,14 +44,17 @@ await game.loadAssets({
   },
 
   shaderSources: {
-    defaultFrag: 'shaders/default.frag',
     defaultVert: 'shaders/default.vert',
+    defaultFrag: 'shaders/default.frag',
 
-    shadedFrag: 'shaders/shaded.frag',
     shadedVert: 'shaders/shaded.vert',
+    shadedFrag: 'shaders/shaded.frag',
 
-    ssaoFrag: 'shaders/ssao.frag',
-    ssaoVert: 'shaders/ssao.vert',
+    normalVert: 'shaders/normal.vert',
+    normalFrag: 'shaders/normal.frag',
+
+    screenVert: 'shaders/screen.vert',
+    screenFrag: 'shaders/screen.frag',
   },
 
   models: {
@@ -72,7 +75,6 @@ await game.loadAssets({
   }
 })
 
-
 const { assets } = game
 assets.shaders = {
   default: gfx.createShader(
@@ -83,9 +85,13 @@ assets.shaders = {
     assets.shaderSources.shadedVert,
     assets.shaderSources.shadedFrag
   ),
-  ssao: gfx.createShader(
-    assets.shaderSources.ssaoVert,
-    assets.shaderSources.ssaoFrag
+  normal: gfx.createShader(
+    assets.shaderSources.normalVert,
+    assets.shaderSources.normalFrag
+  ),
+  screen: gfx.createShader(
+    assets.shaderSources.screenVert,
+    assets.shaderSources.screenFrag
   ),
 }
 
@@ -104,8 +110,10 @@ assets.meshes = Object.fromEntries(
 game.globals.usingGamepad = false
 game.globals.levelCompletions = {}
 game.globals.level = 1
+game.globals.framebuffer = gfx.createFramebufferWithDepth()
+game.globals.normalbuffer = gfx.createFramebufferWithDepth()
 
 game.setScene(() => {
-  // game.addThing(new AmbientOcclusion())
+  game.addThing(new Renderer())
   game.addThing(new Board())
 })
