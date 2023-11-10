@@ -6,6 +6,7 @@ uniform mat4 projectionMatrix;
 
 varying vec2 vTexCoord;
 
+// Finds the inverse of a mat4
 mat4 inverse(mat4 m) {
     float
         a00 = m[0][0], a01 = m[0][1], a02 = m[0][2], a03 = m[0][3],
@@ -45,6 +46,87 @@ mat4 inverse(mat4 m) {
         a00 * b09 - a01 * b07 + a02 * b06,
         a31 * b01 - a30 * b03 - a32 * b00,
         a20 * b03 - a21 * b01 + a22 * b00) / det;
+}
+
+float mod2(float a, float b) {
+    float m = a - floor((a + 0.5) / b) * b;
+    return floor(m + 0.5);
+}
+
+int mod2(int a, int b) {
+    return (a)-((a)/(b))*(b);
+}
+
+// Converts rgb to hsv
+vec3 rgb_to_hsv(vec3 rgb) {
+    float r = rgb.r;
+    float g = rgb.g;
+    float b = rgb.b;
+
+    float max_val = max(r, max(g, b));
+    float min_val = min(r, min(g, b));
+    float diff = max_val - min_val;
+
+    // Hue
+    float h = 0.0;
+    h = (max_val == r) ? mod2((60.0 * ((g-b)/diff) + 360.0), 360.0) : h;
+    h = (max_val == g) ? mod2((60.0 * ((b-r)/diff) + 120.0), 360.0) : h;
+    h = (max_val == b) ? mod2((60.0 * ((r-g)/diff) + 240.0), 360.0) : h;
+    h = h / 360.0;
+
+    // Saturation
+    float s = (max_val == 0.0) ? 0.0 : diff / max_val;
+
+    // Value
+    float v = max_val;
+
+    // Clamp values
+    h = max(min(h, 1.0), 0.0);
+    s = max(min(s, 1.0), 0.0);
+    v = max(min(v, 1.0), 0.0);
+
+    return vec3(h, s, v);
+}
+
+// Converts hsv to rgb
+vec3 hsv_to_rgb(vec3 hsv) {
+  float h = hsv.r;
+  float s = hsv.g;
+  float v = hsv.b;
+
+	int i = int(floor(h * 6.0));
+	float f = h * 6.0 - float(i);
+	float p = v * (1.0 - s);
+	float q = v * (1.0 - f * s);
+	float t = v * (1.0 - (1.0 - f) * s);
+
+  int sw = mod2(i, 6);
+
+  float r = 0.0;
+  r = (sw == 0) ? v : r;
+  r = (sw == 1) ? q : r;
+  r = (sw == 2) ? p : r;
+  r = (sw == 3) ? p : r;
+  r = (sw == 4) ? t : r;
+  r = (sw == 5) ? v : r;
+
+  float g = 0.0;
+  g = (sw == 0) ? t : g;
+  g = (sw == 1) ? v : g;
+  g = (sw == 2) ? v : g;
+  g = (sw == 3) ? q : g;
+  g = (sw == 4) ? p : g;
+  g = (sw == 5) ? p : g;
+
+  float b = 0.0;
+  b = (sw == 0) ? p : b;
+  b = (sw == 1) ? p : b;
+  b = (sw == 2) ? t : b;
+  b = (sw == 3) ? v : b;
+  b = (sw == 4) ? v : b;
+  b = (sw == 5) ? q : b;
+
+	return vec3(r, g, b);
 }
 
 // Function to retrieve depth from the depth texture
@@ -108,16 +190,17 @@ float computeSSAO(vec2 uv, vec3 position) {
 void main() {
   float depth = getDepth(vTexCoord);
   vec3 position = getViewPosition(vTexCoord, depth);
-  float ao = computeSSAO(vTexCoord, position);
+  float ao = pow(computeSSAO(vTexCoord, position), 1.6) + 0.1;
 
   vec4 color = texture2D(colorTexture, vTexCoord);
-  vec3 baseColor = color.rgb * (1.2 - ao);
-  float paletteRange = 12.0;
+  vec3 baseColor = color.rgb * (1.3 - ao*1.5);
+  baseColor = rgb_to_hsv(baseColor);
+  float paletteRange = 13.0;
   float exponent = 0.5;
   vec3 palettizedColor = vec3(
-    pow(floor(pow(baseColor.r, exponent) * paletteRange) / paletteRange, 1.0 / exponent),
-    pow(floor(pow(baseColor.g, exponent) * paletteRange) / paletteRange, 1.0 / exponent),
+    floor(baseColor.r * paletteRange) / paletteRange,
+    floor((baseColor.g + ao*0.5) * paletteRange) / paletteRange,
     pow(floor(pow(baseColor.b, exponent) * paletteRange) / paletteRange, 1.0 / exponent)
   );
-  gl_FragColor = vec4(palettizedColor, color.a);
+  gl_FragColor = vec4(hsv_to_rgb(palettizedColor), color.a);
 }

@@ -3,8 +3,8 @@ import * as gfx from 'webgl'
 import Board from './board.js'
 import Renderer from './renderer.js'
 
-game.config.width = 400
-game.config.height = 240
+game.config.width = 600
+game.config.height = 360
 //game.config.isWebglEnabled = false
 document.title = 'Conveyor King'
 
