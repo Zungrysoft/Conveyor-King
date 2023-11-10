@@ -13,6 +13,7 @@ import * as simpleFans from './levels/simpleFans.js'
 import * as twoTowers from './levels/twoTowers.js'
 import * as rotatorTest from './levels/rotatorTest.js'
 import * as doubleZap from './levels/doubleZap.js'
+import * as fanTower from './levels/fanTower.js'
 
 const LEVEL_LIST = [
   intro,
@@ -28,6 +29,7 @@ const LEVEL_LIST = [
   plinko,
   zapYourProblems,
   doubleZap,
+  fanTower,
 ]
 
 export function getLevel(lvl) {
