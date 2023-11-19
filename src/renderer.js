@@ -4,11 +4,17 @@ import * as mat from 'matrices'
 import Thing from 'thing'
 import { assets } from 'game'
 
-export function drawMesh ({mesh, texture, position, rotation=[0.0, 0.0, 0.0], scale=1.0, color=[1, 1, 1, 1], scroll=0.0}={}) {
+export function drawMesh ({mesh, texture, position, rotation=[0.0, 0.0, 0.0], scale=1.0, color=[1, 1, 1, 1], scroll=0.0, glow=0.0}={}) {
+  let glowColor = [
+    color[0] * (1.0 + glow/2) + glow/2,
+    color[1] * (1.0 + glow/2) + glow/2,
+    color[2] * (1.0 + glow/2) + glow/2,
+    color[3],
+  ]
   gfx.setFramebuffer(game.globals.framebuffer.framebuffer)
   gfx.setShader(assets.shaders.shaded)
   game.getCamera3D().setUniforms()
-  gfx.set('color', color)
+  gfx.set('color', glowColor)
   gfx.set('scroll', scroll)
   gfx.setTexture(texture)
   gfx.set('modelMatrix', mat.getTransformation({

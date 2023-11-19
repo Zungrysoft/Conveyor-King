@@ -3,6 +3,7 @@ import * as soundmanager from 'soundmanager'
 import * as render from './renderer.js'
 import * as vec2 from 'vector2'
 import * as vec3 from 'vector3'
+import * as game from 'game'
 import Thing from 'thing'
 import { assets } from 'game'
 
@@ -246,6 +247,8 @@ export default class Element extends Thing {
 
   // Draws one game element
   draw () {
+    let board = game.getThing('board')
+
     // Don't render if destroyed
     if (this.elementReference.destroyed && this.anim.moveType === 'none') {
       return
@@ -286,6 +289,12 @@ export default class Element extends Thing {
       rColorBase = [0.4, 0.4, 0.4, 1]
     }
 
+    // Glow
+    let rGlow = 0.0
+    if (board.selectedColor !== '' && board.selectedColor === this.elementReference.color) {
+      rGlow = u.map(Math.sin(board.time / 20), -1, 1, 0.2, 0.4)
+    }
+
     // Draw the base model
     render.drawMesh({
       mesh: rMesh,
@@ -294,6 +303,7 @@ export default class Element extends Thing {
       rotation: rRot,
       scale: rScale,
       color: rColorBase,
+      glow: rGlow,
     })
 
     // If this is a conveyor, render the belt as well
@@ -308,6 +318,7 @@ export default class Element extends Thing {
         scale: rScale,
         color: [1, 1, 1, 1],
         scroll: scroll,
+        glow: rGlow,
       })
     }
 
@@ -323,6 +334,7 @@ export default class Element extends Thing {
         rotation: vec3.add(rRot, [0, spin, Math.PI]),
         scale: rScale,
         color: rColor,
+        glow: rGlow,
       })
     }
 
@@ -335,6 +347,7 @@ export default class Element extends Thing {
         rotation: rRot,
         scale: rScale,
         color: rColor,
+        glow: rGlow,
       })
     }
 
@@ -366,6 +379,7 @@ export default class Element extends Thing {
         rotation: rRot,
         scale: rScale,
         color: [1, 1, 1, 1],
+        glow: rGlow,
       })
     }
   }

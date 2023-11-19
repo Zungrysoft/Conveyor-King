@@ -120,6 +120,16 @@ export function distance (a, b) {
 }
 
 /**
+ * Gets the Manhattan distance between two points in 2D space
+ * @param {array} v1
+ * @param {array} v2
+ * @returns Distance
+ */
+export function distanceManhattan (v1, v2) {
+  return Math.abs(v1[0] - v2[0]) + Math.abs(v1[1] - v2[1])
+}
+
+/**
  * Linearly interpolates between two 2D vectors
  * @param {number} a - vector when t=0
  * @param {number} b - vector when t=1

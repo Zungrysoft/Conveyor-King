@@ -26,6 +26,7 @@ export default class Board extends Thing {
   time = 0
   controlMap = {}
   lastControlTime = -1000
+  selectedColor = ''
 
   constructor () {
     super()
@@ -62,14 +63,14 @@ export default class Board extends Thing {
 
   setupControls() {
     const fullControlMap = {
-      red: {keyCode: "KeyR", name: "R", buttonId: 1, buttonName: "B", priority: 0},
-      green: {keyCode: "KeyG", name: "G", buttonId: 0, buttonName: "A", priority: 1},
-      blue: {keyCode: "KeyB", name: "B", buttonId: 2, buttonName: "X", priority: 2},
-      yellow: {keyCode: "KeyY", name: "Y", buttonId: 3, buttonName: "Y", priority: 3},
-      cyan: {keyCode: "KeyC", name: "C", buttonId: 9, buttonName: "Select", priority: 4},
-      purple: {keyCode: "KeyP", name: "P", buttonId: 8, buttonName: "Start", priority: 5},
-      orange: {keyCode: "KeyO", name: "O", buttonId: 11, buttonName: "RS", priority: 6},
-      white: {keyCode: "KeyW", name: "W", buttonId: 10, buttonName: "LS", priority: 7},
+      red: {keyCode: "KeyZ", name: "Z", buttonId: 1, buttonName: "B", priority: 0},
+      green: {keyCode: "KeyX", name: "X", buttonId: 0, buttonName: "A", priority: 1},
+      blue: {keyCode: "KeyC", name: "C", buttonId: 2, buttonName: "X", priority: 2},
+      yellow: {keyCode: "KeyV", name: "V", buttonId: 3, buttonName: "Y", priority: 3},
+      cyan: {keyCode: "KeyB", name: "B", buttonId: 9, buttonName: "Select", priority: 4},
+      purple: {keyCode: "KeyN", name: "N", buttonId: 8, buttonName: "Start", priority: 5},
+      orange: {keyCode: "KeyM", name: "M", buttonId: 11, buttonName: "RS", priority: 6},
+      white: {keyCode: "Comma", name: ",", buttonId: 10, buttonName: "LS", priority: 7},
     }
     this.controlMap = []
 
@@ -112,46 +113,22 @@ export default class Board extends Thing {
           game.resetScene()
         }
       }
-
-      // Load custom level
-      if (game.keysPressed.KeyL) {
-        try {
-          navigator.clipboard.readText()
-          .then(text => {
-            try {
-              const stateData = JSON.parse(text)
-              game.globals.customLevelState = text
-              game.globals.level = 0
-              game.resetScene()
-            }
-            catch (error) {
-              this.errorMessage = "Failed to parse JSON"
-              this.errorTime = 300
-            }
-          })
-          .catch(err => {
-            this.errorMessage = "Failed to access clipboard"
-            this.errorTime = 300
-          });
-        }
-        catch (error) {
-          this.errorMessage = "Clipboard is disabled in this browser"
-          this.errorTime = 300
-        }
-      }
     }
+
+    // Selection function
+    this.selectedColor = this.selectColor()
 
     // Camera controls
-    if (game.keysPressed.ArrowRight) {
+    if (game.keysPressed.ArrowRight || game.keysPressed.KeyD) {
       this.viewAngleTarget[0] -= Math.PI/4
     }
-    if (game.keysPressed.ArrowLeft) {
+    if (game.keysPressed.ArrowLeft || game.keysPressed.KeyA) {
       this.viewAngleTarget[0] += Math.PI/4
     }
-    if (game.keysPressed.ArrowUp) {
+    if (game.keysPressed.ArrowUp || game.keysPressed.KeyW) {
       this.viewAngleTarget[1] += Math.PI/8
     }
-    if (game.keysPressed.ArrowDown) {
+    if (game.keysPressed.ArrowDown || game.keysPressed.KeyS) {
       this.viewAngleTarget[1] -= Math.PI/8
     }
     this.viewAngleTarget[1] = u.clamp(this.viewAngleTarget[1], 0, Math.PI/2)
@@ -191,44 +168,19 @@ export default class Board extends Thing {
     if (!blocked && this.time - this.lastControlTime > 10) {
       // If advancement queue is empty, accept user input
       if (this.advancementData.queue.length === 0) {
-        for (const control in this.controlMap) {
-          // If the user pressed a control key...
-          if (game.keysDown[this.controlMap[control].keyCode]) {
-            // Create action queue
-            this.advancementData = {
-              control: control,
-              queue: [
-                'conveyor',
-                'fall',
-                'rotator',
-                'fan0',
-                'fall',
-                'fan1',
-                'fall',
-                'fan2',
-                'fall',
-                'fan3',
-                'fall',
-                'laser',
-                'fall',
-                'fall', // Hack for now
-                'fall',
-                'fall',
-                'fall',
-              ]
+        if (game.mouse.leftButton && this.selectedColor !== '') {
+          this.controlInput(this.selectedColor)
+        }
+        else {
+          for (const control in this.controlMap) {
+            // If the user pressed a control key...
+            if (game.keysDown[this.controlMap[control].keyCode]) {
+              // Start advancement queue
+              this.controlInput(control)
+  
+              // Done looking for controls
+              break
             }
-
-            // Push current state to undo stack (but only if it's different from the previous state)
-            const curState = JSON.stringify(this.state)
-            if (this.stateStack[this.stateStack.length-1] !== curState) {
-              this.stateStack.push(curState)
-            }
-
-            // Limit the player to one action every n frames
-             this.lastControlTime = this.time
-
-            // Done looking for controls
-            break
           }
         }
       }
@@ -287,6 +239,112 @@ export default class Board extends Thing {
     cam.position = vec3.add(offsetPosition, this.viewPosition)
     cam.lookVector = vec3.invert(vec3.anglesToVector(this.viewAngle[0], this.viewAngle[1]))
     cam.updateMatrices()
+  }
+
+  controlInput(control) {
+    // Create action queue
+    this.advancementData = {
+      control: control,
+      queue: [
+        'conveyor',
+        'fall',
+        'rotator',
+        'fan0',
+        'fall',
+        'fan1',
+        'fall',
+        'fan2',
+        'fall',
+        'fan3',
+        'fall',
+        'laser',
+        'fall',
+        'fall', // Hack for now
+        'fall',
+        'fall',
+        'fall',
+      ]
+    }
+
+    // Push current state to undo stack (but only if it's different from the previous state)
+    const curState = JSON.stringify(this.state)
+    if (this.stateStack[this.stateStack.length-1] !== curState) {
+      this.stateStack.push(curState)
+    }
+
+    // Limit the player to one action every n frames
+     this.lastControlTime = this.time
+  }
+
+  hitTestElement(element, position) {
+    // Don't do collision checks for crates since they are annoying to click around on conveyors
+    if (element.type === 'crate') {
+      return false
+    }
+    // Conveyor
+    if (element.type === 'conveyor' && !element.scaffold) {
+      if (
+        (Math.abs(element.position[0] - position[0]) < 0.5) &&
+        (Math.abs(element.position[1] - position[1]) < 0.5) &&
+        (Math.abs((element.position[2] + 0.41) - position[2]) < 0.09)
+      ) {
+        return true
+      }
+    }
+    // Smaller objects
+    if ((element.type === 'fan' || element.type === 'laser') && !element.scaffold) {
+      if (
+        (Math.abs(element.position[0] - position[0]) < 0.2) &&
+        (Math.abs(element.position[1] - position[1]) < 0.2) &&
+        (Math.abs(element.position[2] - position[2]) < 0.5)
+      ) {
+        return true
+      }
+    }
+    // Default box shape
+    else {
+      if (
+        (Math.abs(element.position[0] - position[0]) < 0.5) &&
+        (Math.abs(element.position[1] - position[1]) < 0.5) &&
+        (Math.abs(element.position[2] - position[2]) < 0.5)
+      ) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  selectColor() {
+    // Create the ray from mouse position and camera data
+    let mouseScreenX = u.map(game.mouse.position[0], 0, game.config.width, -1, 1)
+    let mouseScreenY = u.map(game.mouse.position[1], 0, game.config.height, 1, -1)
+    let clipMouse = [mouseScreenX, mouseScreenY, 1]
+    let rayProj = mat.multiplyVectorByMatrix(clipMouse, mat.invert(game.getCamera3D().projectionMatrix))
+    let ray = vec3.normalize(mat.multiplyVectorByMatrix(rayProj, mat.invert(game.getCamera3D().viewMatrix)))
+
+    // Do the line trace
+    let tracedDistance = 0
+    let maxTraceDistance = 15
+    let traceStep = 0.01
+    let curPos = [...game.getCamera3D().position]
+    let rayStep = vec3.scale(ray, traceStep)
+
+    while (tracedDistance < maxTraceDistance) {
+      curPos = vec3.add(curPos, rayStep)
+
+      // Iterate over elements and check whether we've hit it
+      for (const element of this.state.elements) {
+        if (this.hitTestElement(element, curPos)) {
+          return element.color || ''
+        }
+      }
+
+      // Advance
+      tracedDistance += traceStep
+    }
+
+    return ''
   }
 
   resetAnimations() {
