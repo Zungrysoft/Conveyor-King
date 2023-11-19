@@ -282,7 +282,7 @@ export default class Board extends Thing {
       return false
     }
     // Conveyor
-    if (element.type === 'conveyor' && !element.scaffold) {
+    else if (element.type === 'conveyor' && !element.scaffold) {
       if (
         (Math.abs(element.position[0] - position[0]) < 0.5) &&
         (Math.abs(element.position[1] - position[1]) < 0.5) &&
@@ -292,7 +292,7 @@ export default class Board extends Thing {
       }
     }
     // Smaller objects
-    if ((element.type === 'fan' || element.type === 'laser') && !element.scaffold) {
+    else if ((element.type === 'fan' || element.type === 'laser') && !element.scaffold) {
       if (
         (Math.abs(element.position[0] - position[0]) < 0.2) &&
         (Math.abs(element.position[1] - position[1]) < 0.2) &&
