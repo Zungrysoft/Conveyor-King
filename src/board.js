@@ -6,6 +6,7 @@ import * as mat from 'matrices'
 import * as render from './renderer.js'
 import * as vec2 from 'vector2'
 import * as vec3 from 'vector3'
+import * as themes from './themes.js'
 import Thing from 'thing'
 import Element from './element.js'
 import { assets } from 'game'
@@ -325,8 +326,8 @@ export default class Board extends Thing {
 
     // Do the line trace
     let tracedDistance = 0
-    let maxTraceDistance = 15
-    let traceStep = 0.01
+    let maxTraceDistance = 20
+    let traceStep = 0.05
     let curPos = [...game.getCamera3D().position]
     let rayStep = vec3.scale(ray, traceStep)
 
@@ -907,11 +908,16 @@ export default class Board extends Thing {
     const { ctx } = game
 
     // Skybox
+    const fogDistance = themes.getTheme(this.state.theme).fogDistance
     render.drawMesh({
       mesh: assets.meshes.skybox,
-      texture: assets.textures.background,
-      position: [0.0, 0.0, 0.0],
-      scale: [-200.0, -200.0, -100.0],
+      texture: assets.textures.square,
+      position: game.getCamera3D().position,
+      scale: [
+        fogDistance * -3,
+        fogDistance * -3,
+        fogDistance * -3,
+      ],
     })
 
     const drawText = (text, fontSize=40, position=[0, 0], align=[0, 0]) => {

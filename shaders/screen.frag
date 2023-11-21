@@ -3,6 +3,8 @@ precision highp float;
 uniform sampler2D colorTexture;
 uniform sampler2D depthTexture;
 uniform mat4 projectionMatrix;
+uniform float fogDistance;
+uniform vec3 fogColor;
 
 varying vec2 vTexCoord;
 
@@ -192,15 +194,26 @@ void main() {
   vec3 position = getViewPosition(vTexCoord, depth);
   float ao = pow(computeSSAO(vTexCoord, position), 1.6) + 0.1;
 
-  vec4 color = texture2D(colorTexture, vTexCoord);
-  vec3 baseColor = color.rgb * (1.3 - ao*1.5);
-  baseColor = rgb_to_hsv(baseColor);
+  // Retrieve the base color from the texture
+  vec4 baseColor = texture2D(colorTexture, vTexCoord);
+  
+  // Add AO
+  vec3 shadedColor = baseColor.rgb * (1.3 - ao*1.5);
+
+  // Add Fog
+  float fogFactor = min(length(position) / fogDistance, 1.0);
+  vec3 foggedColor = shadedColor.rgb * (1.0 - fogFactor) + fogColor * fogFactor;
+
+  // Conform to palette
+  vec3 hsvColor = rgb_to_hsv(foggedColor);
   float paletteRange = 13.0;
   float exponent = 0.5;
   vec3 palettizedColor = vec3(
-    floor(baseColor.r * paletteRange) / paletteRange,
-    floor((baseColor.g + ao*0.5) * paletteRange) / paletteRange,
-    pow(floor(pow(baseColor.b, exponent) * paletteRange) / paletteRange, 1.0 / exponent)
+    floor(hsvColor.r * paletteRange) / paletteRange,
+    floor((hsvColor.g + ao*0.5) * paletteRange) / paletteRange,
+    pow(floor(pow(hsvColor.b, exponent) * paletteRange) / paletteRange, 1.0 / exponent)
   );
-  gl_FragColor = vec4(hsv_to_rgb(palettizedColor), color.a);
+
+  // Output
+  gl_FragColor = vec4(hsv_to_rgb(palettizedColor), baseColor.a);
 }

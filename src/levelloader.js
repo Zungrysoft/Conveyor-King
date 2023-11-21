@@ -14,8 +14,10 @@ import * as twoTowers from './levels/twoTowers.js'
 import * as rotatorTest from './levels/rotatorTest.js'
 import * as doubleZap from './levels/doubleZap.js'
 import * as fanTower from './levels/fanTower.js'
+import * as bridge from './levels/bridge.js'
 
 const LEVEL_LIST = [
+  bridge,
   intro,
   fanIntro,
   stacking,
@@ -35,6 +37,9 @@ const LEVEL_LIST = [
 export function getLevel(lvl) {
   // Retrieve level data
   let ret = JSON.parse(JSON.stringify(LEVEL_LIST[lvl-1].data))
+
+  // Add some top-level keys
+  ret.theme = ret.theme || 'sandy';
 
   // Clean up elements
   for (const element of ret.elements) {
