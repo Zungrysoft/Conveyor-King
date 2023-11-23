@@ -189,6 +189,10 @@ float computeSSAO(vec2 uv, vec3 position) {
   return occlusion / float(samples);
 }
 
+float round (float n) {
+  return floor(n + 0.5);
+}
+
 void main() {
   float depth = getDepth(vTexCoord);
   vec3 position = getViewPosition(vTexCoord, depth);
@@ -206,14 +210,16 @@ void main() {
 
   // Conform to palette
   vec3 hsvColor = rgb_to_hsv(foggedColor);
+  float hueRange = 16.0;
   float paletteRange = 13.0;
   float exponent = 0.5;
-  vec3 palettizedColor = vec3(
-    floor(hsvColor.r * paletteRange) / paletteRange,
-    floor((hsvColor.g + ao*0.5) * paletteRange) / paletteRange,
+  vec3 palettizedColorHSV = vec3(
+    round(hsvColor.r * hueRange) / hueRange,
+    ceil((hsvColor.g + ao*0.5) * paletteRange) / paletteRange,
     pow(floor(pow(hsvColor.b, exponent) * paletteRange) / paletteRange, 1.0 / exponent)
   );
+  vec3 palettizedColor = hsv_to_rgb(palettizedColorHSV);
 
   // Output
-  gl_FragColor = vec4(hsv_to_rgb(palettizedColor), baseColor.a);
+  gl_FragColor = vec4(palettizedColor, baseColor.a);
 }

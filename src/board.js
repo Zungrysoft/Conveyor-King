@@ -1,7 +1,6 @@
 import * as game from 'game'
 import * as u from 'utils'
 import * as soundmanager from 'soundmanager'
-import * as gfx from 'webgl'
 import * as mat from 'matrices'
 import * as render from './renderer.js'
 import * as vec2 from 'vector2'
@@ -178,7 +177,7 @@ export default class Board extends Thing {
             if (game.keysDown[this.controlMap[control].keyCode]) {
               // Start advancement queue
               this.controlInput(control)
-  
+
               // Done looking for controls
               break
             }
@@ -222,6 +221,15 @@ export default class Board extends Thing {
     if (this.state.cratesDelivered >= this.state.cratesRequired && this.state.level > 0) {
       game.globals.levelCompletions[this.state.level-1] = true
     }
+
+    // Spawn particles
+    const radius = 10
+    const particlePos = [
+      (Math.random() * 2 * radius) - radius,
+      (Math.random() * 2 * radius) - radius,
+      (Math.random() * 2 * radius) - radius,
+    ]
+    themes.spawnParticle(this.state.theme, particlePos)
   }
 
   updateCamera() {
@@ -919,6 +927,15 @@ export default class Board extends Thing {
         fogDistance * -3,
       ],
     })
+
+    // Theme props
+    for (const prop of themes.getTheme(this.state.theme).props) {
+      render.drawMesh({
+        mesh: assets.meshes[prop.mesh],
+        texture: assets.textures[prop.texture],
+        position: [0, 0, 0],
+      })
+    }
 
     const drawText = (text, fontSize=40, position=[0, 0], align=[0, 0]) => {
       // Hud scale and text size

@@ -6,38 +6,58 @@ import Thing from 'thing'
 import { assets } from 'game'
 
 export function drawMesh ({
-  mesh, 
-  texture, 
-  position, 
-  rotation=[0.0, 0.0, 0.0], 
-  scale=1.0, 
-  color=[1, 1, 1, 1], 
-  scroll=0.0, 
-  glow=0.0}={}, 
-  fogDistance=-1,
-  fogColor=[1.0, 1.0, 1.0],
-) {
+  mesh,
+  texture,
+  position,
+  rotation=[0.0, 0.0, 0.0],
+  scale=1.0,
+  color=[1, 1, 1, 1],
+  scroll=0.0,
+  glow=0.0,
+}={}) {
   let glowColor = [
     color[0] * (1.0 + glow/2) + glow/2,
     color[1] * (1.0 + glow/2) + glow/2,
     color[2] * (1.0 + glow/2) + glow/2,
     color[3],
   ]
+  let fixedRotation = [
+    rotation[0] + Math.PI/2,
+    rotation[1],
+    rotation[2],
+  ]
   gfx.setFramebuffer(game.globals.framebuffer.framebuffer)
   gfx.setShader(assets.shaders.shaded)
   game.getCamera3D().setUniforms()
   gfx.set('color', glowColor)
   gfx.set('scroll', scroll)
-  gfx.set('fogDistance', fogDistance)
-  gfx.set('fogColor', fogColor)
   gfx.setTexture(texture)
   gfx.set('modelMatrix', mat.getTransformation({
     position: position,
-    rotation: rotation,
+    rotation: fixedRotation,
     scale: scale
   }))
   gfx.set('rotationMatrix', mat.getRotation(rotation))
   gfx.drawMesh(mesh)
+}
+
+export function drawBillboard ({
+  texture,
+  position,
+  scale=1.0,
+  color=[1, 1, 1, 1],
+}={}) {
+  gfx.setFramebuffer(game.globals.framebuffer.framebuffer)
+  gfx.setShader(assets.shaders.billboard)
+  game.getCamera3D().setUniforms()
+  gfx.set('color', color)
+  gfx.set('scroll', scroll)
+  gfx.setTexture(texture)
+  gfx.set('modelMatrix', mat.getTransformation({
+    position: position,
+    scale: scale
+  }))
+  gfx.drawBillboard()
 }
 
 export default class Renderer extends Thing {

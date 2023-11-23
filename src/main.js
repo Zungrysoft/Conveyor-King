@@ -30,28 +30,8 @@ await game.loadAssets({
     uv_block: 'images/uv_block.png',
     uv_laser: 'images/uv_laser.png',
     uv_rotator: 'images/uv_rotator.png',
-  },
 
-  sounds: {
-    collect: 'sounds/collect.wav',
-    laser: 'sounds/laser2.wav',
-    laserHit: 'sounds/laser.wav',
-    shift: 'sounds/shift2.wav',
-    thump: 'sounds/thump.wav',
-    wind: 'sounds/wind.wav',
-    fail: 'sounds/fail.wav',
-    whoosh: 'sounds/whoosh.wav',
-  },
-
-  shaderSources: {
-    defaultVert: 'shaders/default.vert',
-    defaultFrag: 'shaders/default.frag',
-
-    shadedVert: 'shaders/shaded.vert',
-    shadedFrag: 'shaders/shaded.frag',
-
-    screenVert: 'shaders/screen.vert',
-    screenFrag: 'shaders/screen.frag',
+    uv_sand: 'images/uv_sand.png',
   },
 
   models: {
@@ -69,17 +49,40 @@ await game.loadAssets({
     laserScaffold: 'models/laser_scaffold.obj',
     rotator: 'models/rotator.obj',
     rotatorArrows: 'models/rotator_arrows.obj',
-  }
+
+    sand: 'models/sand.obj',
+  },
+
+  sounds: {
+    collect: 'sounds/collect.wav',
+    laser: 'sounds/laser2.wav',
+    laserHit: 'sounds/laser.wav',
+    shift: 'sounds/shift2.wav',
+    thump: 'sounds/thump.wav',
+    wind: 'sounds/wind.wav',
+    fail: 'sounds/fail.wav',
+    whoosh: 'sounds/whoosh.wav',
+  },
+
+  shaderSources: {
+    shadedVert: 'shaders/shaded.vert',
+    shadedFrag: 'shaders/shaded.frag',
+
+    billboardVert: 'shaders/billboard.vert',
+
+    screenVert: 'shaders/screen.vert',
+    screenFrag: 'shaders/screen.frag',
+  },
 })
 
 const { assets } = game
 assets.shaders = {
-  default: gfx.createShader(
-    assets.shaderSources.defaultVert,
-    assets.shaderSources.defaultFrag
-  ),
   shaded: gfx.createShader(
     assets.shaderSources.shadedVert,
+    assets.shaderSources.shadedFrag
+  ),
+  billboard: gfx.createShader(
+    assets.shaderSources.billboardVert,
     assets.shaderSources.shadedFrag
   ),
   screen: gfx.createShader(

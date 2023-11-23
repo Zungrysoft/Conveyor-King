@@ -274,7 +274,7 @@ export default class Element extends Thing {
     if (this.anim.rotation !== undefined) {
       angle = this.anim.rotation
     }
-    let rRot = [Math.PI/2, 0, angle - Math.PI/2]
+    let rRot = [0, 0, angle - Math.PI/2]
 
     // Scale
     let rScale = [this.anim.scale, this.anim.scale, this.anim.scale]
