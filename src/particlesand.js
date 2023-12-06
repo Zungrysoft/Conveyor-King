@@ -1,18 +1,15 @@
 import * as game from 'game'
 import * as u from 'utils'
 import * as vec3 from 'vector3'
-import * as gfx from 'webgl'
 import Thing from 'thing'
 import { assets } from 'game'
 import * as render from './renderer.js'
 
 export default class SandParticle extends Thing {
   speed = 0.06
-  wobble = 0.6
-  wobbleScale = 6
+  windRate = 0.03
+  windScale = 0.03
   position = [0, 0, 0]
-  velocity = [-this.speed, 0, 0]
-  constantVelocity = [-0.06, -0.006, 0.015]
   time = 0
 
   constructor (position) {
@@ -22,24 +19,15 @@ export default class SandParticle extends Thing {
 
   update () {
     this.time ++
-
-    // Make velocity wobble from noise
-    const noiseSample = vec3.normalize(vec3.add([
-      u.noise(...vec3.scale(this.position, 0.8 * this.wobbleScale)),
-      u.noise(...vec3.scale(this.position, 1.6 * this.wobbleScale)),
-      u.noise(...vec3.scale(this.position, 3.7 * this.wobbleScale)),
-    ], [200, 300, 400]))
-    this.velocity = vec3.add(this.velocity, vec3.scale(noiseSample, this.wobble))
-
-    // Rescale velocity to match speed
-    this.velocity = vec3.scale(vec3.normalize(this.velocity), this.speed)
+    const boardTime = game.getThing('board').time || 0
 
     // Move
-    this.position = vec3.add(this.position, this.velocity)
-    this.position = vec3.add(this.position, this.constantVelocity)
+    this.position = vec3.add(this.position, [-0.06, -0.006, 0.025])
+    this.position[0] += Math.sin((boardTime/60) * this.windRate * Math.PI*2) * this.windScale
+    this.position[0] += Math.sin((boardTime/60) * this.windRate * Math.PI*2 * 1.2) * this.windScale
 
     // Kill if too far away or too old
-    if (vec3.magnitude(this.position) > 30 || this.time > 600) {
+    if (vec3.magnitude(this.position) > 20 || this.time > 600) {
       this.dead = true
     }
   }
@@ -48,7 +36,7 @@ export default class SandParticle extends Thing {
     render.drawBillboard({
       texture: assets.textures.square,
       position: this.position,
-      color: [0.7, 0.7, 0.6, 1.0],
+      color: [0.7, 0.7, 0.46, 1.0],
       scale: 0.04,
       unshaded: true,
     })

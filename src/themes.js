@@ -4,11 +4,14 @@ import SandParticle from './particlesand.js'
 const themes = {
   sandy: {
     props: [
-      {mesh: "sand", texture: "uv_sand"},
+      {mesh: "deco_sand", texture: "uv_deco_sand"},
+      {mesh: "deco_dumptruck", texture: "uv_deco_dumptruck"},
+      {mesh: "deco_dumptruck_sand", texture: "uv_deco_sand"},
+      {mesh: "deco_scrap_beams", texture: "square", textureColor: [0.4, 0.35, 0.3, 1.0]},
     ],
     particle: "sand",
     particleRate: 0.1,
-    fogDistance: 30,
+    fogDistance: 33,
     fogColor: [0.8, 0.8, 0.71],
     particles: [],
     music: "",

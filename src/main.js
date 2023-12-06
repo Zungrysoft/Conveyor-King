@@ -25,13 +25,14 @@ await game.loadAssets({
     uv_chute_e: 'images/uv_chute_e.png',
     uv_chute_: 'images/uv_chute.png',
     uv_conveyorBelt: 'images/uv_conveyor_belt.png',
-    uv_conveyorScaffold: 'images/uv_conveyor_scaffold.png',
+    uv_conveyorScaffold: 'images/uv_scaffold_conveyor.png',
     uv_scaffold: 'images/uv_scaffold.png',
     uv_block: 'images/uv_block.png',
     uv_laser: 'images/uv_laser.png',
     uv_rotator: 'images/uv_rotator.png',
 
-    uv_sand: 'images/uv_sand.png',
+    uv_deco_sand: 'images/uv_deco_sand.png',
+    uv_deco_dumptruck: 'images/uv_deco_dumptruck.png',
   },
 
   models: {
@@ -50,7 +51,10 @@ await game.loadAssets({
     rotator: 'models/rotator.obj',
     rotatorArrows: 'models/rotator_arrows.obj',
 
-    sand: 'models/sand.obj',
+    deco_sand: 'models/deco_sand.obj',
+    deco_dumptruck: 'models/deco_dumptruck.obj',
+    deco_dumptruck_sand: 'models/deco_dumptruck_sand.obj',
+    deco_scrap_beams: 'models/deco_scrap_beams.obj',
   },
 
   sounds: {

@@ -934,6 +934,7 @@ export default class Board extends Thing {
         mesh: assets.meshes[prop.mesh],
         texture: assets.textures[prop.texture],
         position: [0, 0, 0],
+        color: prop.textureColor || [1, 1, 1, 1]
       })
     }
 
