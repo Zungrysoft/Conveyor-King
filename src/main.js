@@ -68,6 +68,8 @@ await game.loadAssets({
     shadedVert: 'shaders/shaded.vert',
     shadedFrag: 'shaders/shaded.frag',
 
+    unshadedFrag: 'shaders/unshaded.frag',
+
     billboardVert: 'shaders/billboard.vert',
 
     screenVert: 'shaders/screen.vert',
@@ -81,9 +83,13 @@ assets.shaders = {
     assets.shaderSources.shadedVert,
     assets.shaderSources.shadedFrag
   ),
+  unshaded: gfx.createShader(
+    assets.shaderSources.shadedVert,
+    assets.shaderSources.unshadedFrag
+  ),
   billboard: gfx.createShader(
     assets.shaderSources.billboardVert,
-    assets.shaderSources.shadedFrag
+    assets.shaderSources.unshadedFrag
   ),
   screen: gfx.createShader(
     assets.shaderSources.screenVert,
@@ -107,7 +113,7 @@ game.globals.usingGamepad = false
 game.globals.levelCompletions = {}
 game.globals.level = 1
 game.globals.framebuffer = gfx.createFramebufferWithDepth()
-game.globals.normalbuffer = gfx.createFramebufferWithDepth()
+game.globals.framebufferUnshaded = gfx.createFramebufferWithDepth()
 
 game.setScene(() => {
   game.addThing(new Renderer())

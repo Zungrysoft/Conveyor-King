@@ -364,6 +364,7 @@ export default class Element extends Thing {
         rotation: [0, 0, lrAngle],
         scale: [this.anim.laserLength, this.anim.laserThickness, this.anim.laserThickness],
         color: rColor,
+        unshaded: true,
       })
     }
 

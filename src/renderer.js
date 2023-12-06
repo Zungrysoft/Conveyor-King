@@ -14,6 +14,7 @@ export function drawMesh ({
   color=[1, 1, 1, 1],
   scroll=0.0,
   glow=0.0,
+  unshaded=false,
 }={}) {
   let glowColor = [
     color[0] * (1.0 + glow/2) + glow/2,
@@ -26,8 +27,8 @@ export function drawMesh ({
     rotation[1],
     rotation[2],
   ]
-  gfx.setFramebuffer(game.globals.framebuffer.framebuffer)
-  gfx.setShader(assets.shaders.shaded)
+  gfx.setFramebuffer(unshaded ? game.globals.framebufferUnshaded.framebuffer : game.globals.framebuffer.framebuffer)
+  gfx.setShader(unshaded ? assets.shaders.unshaded : assets.shaders.shaded)
   game.getCamera3D().setUniforms()
   gfx.set('color', glowColor)
   gfx.set('scroll', scroll)
@@ -45,9 +46,11 @@ export function drawBillboard ({
   texture,
   position,
   scale=1.0,
+  scroll=0.0,
   color=[1, 1, 1, 1],
+  unshaded=false,
 }={}) {
-  gfx.setFramebuffer(game.globals.framebuffer.framebuffer)
+  gfx.setFramebuffer(unshaded ? game.globals.framebufferUnshaded.framebuffer : game.globals.framebuffer.framebuffer)
   gfx.setShader(assets.shaders.billboard)
   game.getCamera3D().setUniforms()
   gfx.set('color', color)
@@ -86,11 +89,17 @@ export default class Renderer extends Thing {
     gfx.setTexture(game.globals.framebuffer.texture, 0)
     gfx.set('depthTexture', 1, 'int')
     gfx.setTexture(game.globals.framebuffer.depthTexture, 1)
+    gfx.set('colorTextureUnshaded', 2, 'int')
+    gfx.setTexture(game.globals.framebufferUnshaded.texture, 2)
+    gfx.set('depthTextureUnshaded', 3, 'int')
+    gfx.setTexture(game.globals.framebufferUnshaded.depthTexture, 3)
     game.getCamera3D().setUniforms()
     gfx.drawScreen()
 
     // Clear frame buffers
     gfx.setFramebuffer(game.globals.framebuffer.framebuffer)
+    gfx.clearFramebuffer()
+    gfx.setFramebuffer(game.globals.framebufferUnshaded.framebuffer)
     gfx.clearFramebuffer()
   }
 }

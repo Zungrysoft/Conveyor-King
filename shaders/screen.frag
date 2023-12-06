@@ -2,6 +2,8 @@ precision highp float;
 
 uniform sampler2D colorTexture;
 uniform sampler2D depthTexture;
+uniform sampler2D colorTextureUnshaded;
+uniform sampler2D depthTextureUnshaded;
 uniform mat4 projectionMatrix;
 uniform float fogDistance;
 uniform vec3 fogColor;
@@ -135,6 +137,9 @@ vec3 hsv_to_rgb(vec3 hsv) {
 float getDepth(vec2 uv) {
   return texture2D(depthTexture, uv).r;
 }
+float getDepthUnshaded(vec2 uv) {
+  return texture2D(depthTextureUnshaded, uv).r;
+}
 
 // Function to calculate the screen-space position from the depth value
 vec3 getViewPosition(vec2 uv, float depth) {
@@ -195,14 +200,30 @@ float round (float n) {
 
 void main() {
   float depth = getDepth(vTexCoord);
-  vec3 position = getViewPosition(vTexCoord, depth);
-  float ao = pow(computeSSAO(vTexCoord, position), 1.6) + 0.1;
+  float depthUnshaded = getDepthUnshaded(vTexCoord);
+  vec3 position;
+  vec3 shadedColor = vec3(1.0, 1.0, 1.0);
+  float ao = 0.0;
+  float alpha = 1.0;
+  if (depth <= depthUnshaded) {
+    position = getViewPosition(vTexCoord, depth);
 
-  // Retrieve the base color from the texture
-  vec4 baseColor = texture2D(colorTexture, vTexCoord);
-  
-  // Add AO
-  vec3 shadedColor = baseColor.rgb * (1.3 - ao*1.5);
+    ao = pow(computeSSAO(vTexCoord, position), 1.6) + 0.1;
+
+    // Retrieve the base color from the texture
+    vec4 baseColor = texture2D(colorTexture, vTexCoord);
+
+    // Add AO
+    shadedColor = baseColor.rgb * (1.3 - ao*1.5);
+    alpha = baseColor.a;
+  }
+  else {
+    position = getViewPosition(vTexCoord, depthUnshaded);
+
+    vec4 baseColor = texture2D(colorTextureUnshaded, vTexCoord);
+    shadedColor = baseColor.rgb;
+    alpha = baseColor.a;
+  }
 
   // Add Fog
   float fogFactor = min(length(position) / fogDistance, 1.0);
@@ -221,5 +242,5 @@ void main() {
   vec3 palettizedColor = hsv_to_rgb(palettizedColorHSV);
 
   // Output
-  gl_FragColor = vec4(palettizedColor, baseColor.a);
+  gl_FragColor = vec4(palettizedColor, alpha);
 }

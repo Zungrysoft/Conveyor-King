@@ -48,8 +48,9 @@ export default class SandParticle extends Thing {
     render.drawBillboard({
       texture: assets.textures.square,
       position: this.position,
-      color: [0.3, 0.3, 0.2, 1.0],
+      color: [0.7, 0.7, 0.6, 1.0],
       scale: 0.04,
+      unshaded: true,
     })
   }
 }
