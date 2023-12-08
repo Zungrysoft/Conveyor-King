@@ -936,7 +936,7 @@ export default class Board extends Thing {
 
     const drawText = (text, fontSize=40, position=[0, 0], align=[0, 0]) => {
       // Hud scale and text size
-      const hs = 0.32
+      const hs = 0.48
 
       // Align horizontal
       let textAlign = 'left'
