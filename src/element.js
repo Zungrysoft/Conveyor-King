@@ -357,13 +357,20 @@ export default class Element extends Thing {
       let offset = [...vec2.rotate([0, this.anim.laserLength/2], lrAngle - Math.PI/2), 0]
       let lrPos = vec3.add(this.anim.laserPosition, offset)
 
+      let beamColor = [
+        1.0 - ((1.0 - rColor[0]) * 0.8),
+        1.0 - ((1.0 - rColor[1]) * 0.8),
+        1.0 - ((1.0 - rColor[2]) * 0.8),
+        rColor[3],
+      ]
+
       render.drawMesh({
         mesh: assets.meshes.cube,
         texture: assets.textures.square,
         position: lrPos,
         rotation: [0, 0, lrAngle],
         scale: [this.anim.laserLength, this.anim.laserThickness, this.anim.laserThickness],
-        color: rColor,
+        color: beamColor,
         unshaded: true,
       })
     }
