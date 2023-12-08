@@ -13,7 +13,6 @@ const themes = {
     particleRate: 0.1,
     fogDistance: 33,
     fogColor: [0.8, 0.8, 0.71],
-    particles: [],
     music: "",
   },
 }

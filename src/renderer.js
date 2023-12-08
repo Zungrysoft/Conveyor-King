@@ -22,11 +22,6 @@ export function drawMesh ({
     color[2] * (1.0 + glow/2) + glow/2,
     color[3],
   ]
-  let fixedRotation = [
-    rotation[0] + Math.PI/2,
-    rotation[1],
-    rotation[2],
-  ]
   gfx.setFramebuffer(unshaded ? game.globals.framebufferUnshaded.framebuffer : game.globals.framebuffer.framebuffer)
   gfx.setShader(unshaded ? assets.shaders.unshaded : assets.shaders.shaded)
   game.getCamera3D().setUniforms()
@@ -35,8 +30,8 @@ export function drawMesh ({
   gfx.setTexture(texture)
   gfx.set('modelMatrix', mat.getTransformation({
     position: position,
-    rotation: fixedRotation,
-    scale: scale
+    rotation: rotation,
+    scale: scale,
   }))
   gfx.set('rotationMatrix', mat.getRotation(rotation))
   gfx.drawMesh(mesh)

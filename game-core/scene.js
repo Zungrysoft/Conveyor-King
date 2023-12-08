@@ -54,7 +54,15 @@ class Scene {
         up: this.upVector
       })
       this.setUniforms()
-    }
+    },
+    getMouseRay () {
+      const mouseScreenX = u.map(game.mouse.position[0], 0, game.config.width, -1, 1)
+      const mouseScreenY = u.map(game.mouse.position[1], 0, game.config.height, 1, -1)
+      const clipMouse = [mouseScreenX, mouseScreenY, 1]
+      const rayProj = mat.multiplyVectorByMatrix(clipMouse, mat.invert(this.projectionMatrix))
+      const ray = vec3.normalize(mat.multiplyVectorByMatrix(rayProj, mat.invert(this.viewMatrix)))
+      return ray
+    },
   }
 
   bgColor = '#4488ff'

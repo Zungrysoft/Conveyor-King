@@ -326,20 +326,16 @@ export default class Board extends Thing {
 
   selectColor() {
     // Create the ray from mouse position and camera data
-    let mouseScreenX = u.map(game.mouse.position[0], 0, game.config.width, -1, 1)
-    let mouseScreenY = u.map(game.mouse.position[1], 0, game.config.height, 1, -1)
-    let clipMouse = [mouseScreenX, mouseScreenY, 1]
-    let rayProj = mat.multiplyVectorByMatrix(clipMouse, mat.invert(game.getCamera3D().projectionMatrix))
-    let ray = vec3.normalize(mat.multiplyVectorByMatrix(rayProj, mat.invert(game.getCamera3D().viewMatrix)))
+    const ray = game.getCamera3D().getMouseRay()
 
     // Do the line trace
-    let tracedDistance = 0
+    let traceDistance = 0
     let maxTraceDistance = 20
     let traceStep = 0.05
     let curPos = [...game.getCamera3D().position]
     let rayStep = vec3.scale(ray, traceStep)
 
-    while (tracedDistance < maxTraceDistance) {
+    while (traceDistance < maxTraceDistance) {
       curPos = vec3.add(curPos, rayStep)
 
       // Iterate over elements and check whether we've hit it
@@ -350,7 +346,7 @@ export default class Board extends Thing {
       }
 
       // Advance
-      tracedDistance += traceStep
+      traceDistance += traceStep
     }
 
     return ''

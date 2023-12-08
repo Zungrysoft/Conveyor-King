@@ -383,7 +383,7 @@ export function createTexture (image, filter = 'nearest', edgeClamp = false) {
 export function createMesh (verts, { isStreamed = false, format = defaultVertexFormat } = {}) {
   const { gl } = game
   if (typeof verts === 'string') {
-    verts = loadObj(verts, { combine: true })
+    verts = loadObj(verts, { combine: true, axisMapping: ['x', '-z', 'y'] })
   }
 
   // make sure verts is a Float32Array

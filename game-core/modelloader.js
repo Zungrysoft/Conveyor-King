@@ -5,9 +5,7 @@
  *
  * @param {string} fileString - The file string to load the object from.
  * @param {Object} [options={}] - The options object.
- * @param {boolean} [options.xFlip=false] - Whether to flip the x-axis.
- * @param {boolean} [options.yFlip=false] - Whether to flip the y-axis.
- * @param {boolean} [options.zFlip=false] - Whether to flip the z-axis.
+ * @param {boolean} [options.axisMapping=['x', 'y', 'z']] - Which axis to use as the left, forward, and up axes.
  * @param {boolean} [options.combine=false] - Whether to combine all objects into one.
  * @returns {(Object|Array)} The loaded object or array of vertices.
  */
@@ -67,15 +65,21 @@ export function loadObj (fileString, options = {}) {
       continue
     }
 
+    const getAxisValue = (vector, axis) => {
+      if (axis === '-x') {return -vector[0]}
+      if (axis === 'y') {return vector[1]}
+      if (axis === '-y') {return -vector[1]}
+      if (axis === 'z') {return vector[2]}
+      if (axis === '-z') {return -vector[2]}
+      return vector[0]
+    }
+
     if (words[0] === 'v') {
-      if (options.xFlip) {
-        value[0] *= -1
-      }
-      if (options.yFlip) {
-        value[1] *= -1
-      }
-      if (options.zFlip) {
-        value[2] *= -1
+      if (options.axisMapping) {
+        let valueSave = [...value]
+        value[0] = getAxisValue(valueSave, options.axisMapping[0])
+        value[1] = getAxisValue(valueSave, options.axisMapping[1])
+        value[2] = getAxisValue(valueSave, options.axisMapping[2])
       }
       positions.push(value)
       currentObject.positions.push(value)
@@ -89,6 +93,12 @@ export function loadObj (fileString, options = {}) {
     }
 
     if (words[0] === 'vn') {
+      if (options.axisMapping) {
+        let valueSave = [...value]
+        value[0] = getAxisValue(valueSave, options.axisMapping[0])
+        value[1] = getAxisValue(valueSave, options.axisMapping[1])
+        value[2] = getAxisValue(valueSave, options.axisMapping[2])
+      }
       normals.push(value)
       currentObject.normals.push(value)
       continue

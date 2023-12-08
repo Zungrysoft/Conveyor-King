@@ -216,7 +216,7 @@ export function getIdentity () {
 
 /**
  * Returns the inverse of a 4x4 matrix.
- * 
+ *
  * @param {Array<number>} [m] - The matrix to invert as a 16-element array of numbers.
  *
  * @returns {Array<number>} The inverse of the matrix as a 16-element array of numbers.
@@ -266,7 +266,7 @@ export function invert (f) {
 
 /**
  * Multiplies a 3D vector by a matrix.
- * 
+ *
  * @param {Array<number>} [vector] - A 3D vector.
  * @param {Array<number>} [matrix] - A 4x4 matrix.
  *

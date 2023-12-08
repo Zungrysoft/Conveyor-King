@@ -1,7 +1,7 @@
 # Blender 3.3.1
 # www.blender.org
-mtllib sand.mtl
-o Area.001
+mtllib deco_sand.mtl
+o Sand
 v 13.545508 -3.349897 -9.349376
 v -3.494114 -5.579132 -7.194632
 v 9.053736 -5.417512 -15.258607
