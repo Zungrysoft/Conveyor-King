@@ -17,7 +17,6 @@ import * as fanTower from './levels/fanTower.js'
 import * as bridge from './levels/bridge.js'
 
 const LEVEL_LIST = [
-  bridge,
   intro,
   fanIntro,
   stacking,

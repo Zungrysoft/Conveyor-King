@@ -28,7 +28,7 @@ export default class SandParticle extends Thing {
 
     // Kill if too far away or too old
     if (vec3.magnitude(this.position) > 20 || this.time > 600) {
-      this.dead = true
+      this.isDead = true
     }
   }
 

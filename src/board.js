@@ -115,6 +115,11 @@ export default class Board extends Thing {
       }
     }
 
+    // Debug control
+    if (game.keysPressed.KeyJ) {
+      // console.log(game.getThings().filter(x => x.windRate).length)
+    }
+
     // Selection function
     this.selectedColor = this.selectColor()
 
@@ -936,7 +941,7 @@ export default class Board extends Thing {
 
     const drawText = (text, fontSize=40, position=[0, 0], align=[0, 0]) => {
       // Hud scale and text size
-      const hs = 0.48
+      const hs = 0.5
 
       // Align horizontal
       let textAlign = 'left'
