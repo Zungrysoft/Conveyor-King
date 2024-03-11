@@ -50,6 +50,7 @@ await game.loadAssets({
     laserScaffold: 'models/laser_scaffold.obj',
     rotator: 'models/rotator.obj',
     rotatorArrows: 'models/rotator_arrows.obj',
+    paint: 'models/paint.obj',
 
     deco_sand: 'models/deco_sand.obj',
     deco_dumptruck: 'models/deco_dumptruck.obj',
@@ -66,6 +67,8 @@ await game.loadAssets({
     wind: 'sounds/wind.wav',
     fail: 'sounds/fail.wav',
     whoosh: 'sounds/whoosh.wav',
+    change: 'sounds/change.wav',
+    fall: 'sounds/fall.wav',
   },
 
   shaderSources: {

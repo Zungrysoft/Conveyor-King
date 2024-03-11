@@ -57,7 +57,7 @@ export function getPerspective ({ fov = 1.57, aspect = 1, near = 1, far = 100000
  */
 export function getTransformation ({ position = [0, 0, 0], rotation = [0, 0, 0], scale = [1, 1, 1] } = {}) {
   const matrix = getIdentity()
-
+  
   // Position
   matrix[12] = position[0]
   matrix[13] = position[1]

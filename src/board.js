@@ -117,7 +117,9 @@ export default class Board extends Thing {
 
     // Debug control
     if (game.keysPressed.KeyJ) {
-      // console.log(game.getThings().filter(x => x.windRate).length)
+      console.log(
+        this.state.elements.filter(x => x.type === 'crate')
+      )
     }
 
     // Selection function
@@ -291,8 +293,8 @@ export default class Board extends Thing {
   }
 
   hitTestElement(element, position) {
-    // Don't do collision checks for crates since they are annoying to click around on conveyors
-    if (element.type === 'crate') {
+    // Don't do collision checks for crates (and some other objects) since they are annoying to click around on conveyors
+    if (this.isUnselectable(element)) {
       return false
     }
     // Conveyor
@@ -375,21 +377,52 @@ export default class Board extends Thing {
     return game.getThings().filter(x => x.anim && x.anim.moveType !== 'none').length > 0
   }
 
-  moveable(element) {
+  isCarryable(element) {
     if (element.destroyed) {
       return false
     }
-    if (['crate', 'fan', 'laser'].includes(element.type)) {
+    if (['crate', 'fan', 'laser', 'paint'].includes(element.type)) {
       return true
     }
     return false
   }
 
-  pushable(element) {
+  isPushable(element) {
     if (element.destroyed) {
       return false
     }
-    if (['crate', 'fan', 'laser'].includes(element.type)) {
+    if (['crate', 'fan', 'laser', 'paint'].includes(element.type)) {
+      return true
+    }
+    return false
+  }
+
+  isUnselectable(element) {
+    if (['crate', 'paint'].includes(element.type)) {
+      return true
+    }
+    return false
+  }
+
+  isConsumable(element) {
+    if (['paint'].includes(element.type)) {
+      return true
+    }
+    return false
+  }
+
+  isPartial(element) {
+    if (element.scaffold) {
+      return false
+    }
+    if (['fan', 'laser', 'paint'].includes(element.type)) {
+      return true
+    }
+    return false
+  }
+
+  isPaintable(element) {
+    if (['conveyor', 'fan', 'laser', 'rotator', 'paint'].includes(element.type)) {
       return true
     }
     return false
@@ -483,10 +516,10 @@ export default class Board extends Thing {
       movePosition: [...e.position]
     }})
 
-    // Mark moveable elements as undecided
+    // Mark carryable elements as undecided
     for (const i in this.state.elements) {
       const element = this.state.elements[i]
-      if (this.moveable(element)) {
+      if (this.isCarryable(element)) {
         states[i].decision = 'undecided'
       }
     }
@@ -589,7 +622,7 @@ export default class Board extends Thing {
       return true
     }
     // Base case: element is not pushable
-    if (!this.pushable(this.state.elements[index])) {
+    if (!this.isPushable(this.state.elements[index])) {
       return false
     }
 
@@ -703,9 +736,9 @@ export default class Board extends Thing {
     if (index === -1) {
       return false
     }
-    // Base case: element is not moveable
+    // Base case: element is not carryable
     // Ignore this base case if height <= 1 since the rotator can always rotate itself and the element on top of it
-    if (!this.moveable(this.state.elements[index]) && height > 1) {
+    if (!this.isCarryable(this.state.elements[index]) && height > 1) {
       return false
     }
 
@@ -757,10 +790,10 @@ export default class Board extends Thing {
       fellInChute: false,
     }})
 
-    // Mark moveable elements as undecided
+    // Mark carryable elements as undecided
     for (const i in this.state.elements) {
       const element = this.state.elements[i]
-      if (this.moveable(element)) {
+      if (this.isCarryable(element)) {
         states[i].decision = 'undecided'
       }
     }
@@ -781,6 +814,12 @@ export default class Board extends Thing {
             // How far below the below element is
             const belowDistance = element.position[2] - this.state.elements[below].position[2]
 
+            // Consumable items can fall into certain elements even when one tile above them
+            let belowDistanceOffset = 0
+            if (this.isConsumable(element) && this.isPartial(this.state.elements[below])) {
+              belowDistanceOffset = 1
+            }            
+
             // If on top of a chute, destroy self
             if (this.state.elements[below].type === 'chute') {
               states[i].decision = 'moving'
@@ -788,9 +827,9 @@ export default class Board extends Thing {
               states[i].fellInChute = this.state.elements[below].letter
             }
             // If on top of a decided element, move down to it
-            else if ((states[below].decision === 'blocked' && belowDistance > 1) || states[below].decision === 'moving') {
+            else if ((states[below].decision === 'blocked' && (belowDistance+belowDistanceOffset) > 1) || states[below].decision === 'moving') {
               states[i].decision = 'moving'
-              states[i].movePosition = vec3.add(states[below].movePosition, [0, 0, 1])
+              states[i].movePosition = vec3.add(states[below].movePosition, [0, 0, 1 - belowDistanceOffset])
               if (states[below].movePosition[2] <= this.state.floorHeight) {
                 states[i].movePosition[2] = this.state.floorHeight
               }
@@ -819,11 +858,6 @@ export default class Board extends Thing {
     // Advance state based on decisions
     for (let i = 0; i < this.state.elements.length; i ++) {
       if (states[i].decision === 'moving') {
-        // If fell into the void, make it disappear
-        if (states[i].movePosition[2] <= this.state.floorHeight && !this.state.elements[i].destroyed) {
-          this.state.elements[i].destroyed = true
-        }
-
         // If it fell in a chute, special rules apply
         if (states[i].fellInChute) {
           // Animation
@@ -831,6 +865,7 @@ export default class Board extends Thing {
             [...this.state.elements[i].position],
             [...states[i].movePosition],
             true,
+            false,
           )
 
           // Move
@@ -846,18 +881,80 @@ export default class Board extends Thing {
         }
         // Otherwise, just move it where it's headed
         else {
+          // If fell into the void, make it disappear
+          if (states[i].movePosition[2] <= this.state.floorHeight && !this.state.elements[i].destroyed) {
+            this.state.elements[i].destroyed = true
+          }
+
           // Animation
           this.getElementThing(this.state.elements[i]).startAnimateFall(
             [...this.state.elements[i].position],
             [...states[i].movePosition],
-            this.state.elements[i].destroyed
+            this.state.elements[i].destroyed,
+            this.state.elements[i].destroyed,
           )
 
-          // Move
-          this.state.elements[i].position = states[i].movePosition
+          // Consumables effect
+          if (this.isConsumable(this.state.elements[i])) {
+            if (this.state.elements[i].type === 'paint') {
+              const didPaint = this.executePaint(this.state.elements[i])
+              if (!didPaint) {
+                this.state.elements[i].position = states[i].movePosition
+              }
+            }
+          }
+          // Move into position
+          else {
+            this.state.elements[i].position = states[i].movePosition
+          }
         }
       }
     }
+  }
+
+  executePaint(element) {
+    // Get the element we're painting
+    let below = this.state.elements[this.getElementDownward(element.position)]
+
+    // Determine if it is paintable
+    if (below && this.isPaintable(below)) {
+      // Animation for painted object (Prevents object from changing color too soon)
+      this.getElementThing(below).startAnimateChangeColor(below.color)
+
+      // Animation for paint
+      this.getElementThing(element).linkAnimation(below, 'paintSplash')
+
+      // Paint the element
+      if (below.type === 'paint') {
+        // Special case: If paint lands on paint, blend the colors!
+        below.color = this.mixColors(element.color, below.color)
+      }
+      else {
+        below.color = element.color
+      }
+
+      // Destroy the paint
+      element.destroyed = true
+      element.position = [0, 0, this.state.floorHeight]
+
+      return true
+    }
+
+    return false
+  }
+
+  mixColors(c1, c2) {
+    let colors = [c1, c2]
+
+    if (colors.includes('blue') && colors.includes('red')) { return 'purple' }
+    if (colors.includes('blue') && colors.includes('yellow')) { return 'green' }
+    if (colors.includes('red') && colors.includes('yellow')) { return 'orange' }
+    if (colors.includes('blue') && colors.includes('green')) { return 'cyan' }
+    if (colors.includes('red') && colors.includes('green')) { return 'yellow' }
+    if (colors.includes('white') && colors.includes('black')) { return 'grey' }
+
+    // If no combinations exist, just use the first provided color
+    return c1
   }
 
   advanceLaser(color) {
@@ -881,7 +978,7 @@ export default class Board extends Thing {
           pos = vec3.add(pos, vec3.directionToVector(element.direction))
           const index = this.getElementAt(pos)
 
-          // If this is a moveable element, mark it for destruction
+          // If this is a carryable element, mark it for destruction
           if (index !== -1) {
             destroyed[index] = true
 

@@ -6,6 +6,7 @@ import * as vec3 from 'vector3'
 import * as game from 'game'
 import Thing from 'thing'
 import { assets } from 'game'
+import PaintParticle from './particlepaint.js'
 
 // Animation params
 const MOVE_LINEAR_SPEED = 0.035
@@ -20,15 +21,17 @@ const LASER_SHRINK_RATE = 0.002
 const ROTATE_LINEAR_SPEED = 0.05
 const SCROLL_TIME = 28
 
-const COLOR_MAP = {
+export const COLOR_MAP = {
   'red': [0.5, 0.0, 0.0, 1],
   'green': [0.0, 0.6, 0.0, 1],
   'blue': [0.0, 0.0, 0.4, 1],
   'yellow': [0.9, 0.9, 0.0, 1],
   'cyan': [0.0, 0.5, 0.5, 1],
-  'purple': [0.5, 0.0, 0.8, 1],
+  'purple': [0.6, 0.0, 0.8, 1],
   'orange': [1.0, 0.5, 0.0, 1],
   'white': [1.0, 1.0, 1.0, 1],
+  'black': [0.15, 0.15, 0.15, 1],
+  'grey': [0.6, 0.6, 0.6, 1],
 }
 
 export default class Element extends Thing {
@@ -123,10 +126,10 @@ export default class Element extends Thing {
     }
   }
 
-  startAnimateFall(startPosition, targetPosition, isDelivered = false, isFailed = false) {
+  startAnimateFall(startPosition, targetPosition, isDestroyed = false, isFallen = false) {
     this.anim.moveType = 'fall'
-    this.anim.isDelivered = isDelivered
-    this.anim.isFailed = isFailed
+    this.anim.isDestroyed = isDestroyed
+    this.anim.isFallen = isFallen
     this.anim.position = [...startPosition]
     this.anim.targetPosition = [...targetPosition]
   }
@@ -137,7 +140,7 @@ export default class Element extends Thing {
     this.anim.position[2] += this.anim.speed
 
     // Get smaller the closer we get to our target
-    if (this.anim.isDelivered) {
+    if (this.anim.isDestroyed) {
       const dist = vec3.magnitude(vec3.subtract(this.anim.position, this.anim.targetPosition))
       this.anim.scale = u.map(dist, 0, 1.0, 0, 1.0, true)
     }
@@ -145,13 +148,20 @@ export default class Element extends Thing {
     // If we've hit the ground...
     if (this.anim.position[2] <= this.anim.targetPosition[2]) {
       // Play a sound effect
-      if (!this.anim.isDelivered) {
+      if (this.anim.isFallen) {
+        soundmanager.playSound("fall")
+      }
+      else if (!this.anim.isDestroyed) {
         soundmanager.playSound("thump")
       }
 
       // End the animation
       this.endAnimation()
     }
+  }
+
+  startAnimateChangeColor(color) {
+    this.anim.color = color
   }
 
   startAnimateShrink(position) {
@@ -220,8 +230,42 @@ export default class Element extends Thing {
     this.anim.laserDirection = this.elementReference.direction
   }
 
+  linkAnimation(element, action) {
+    this.anim.linkedAnimations.push({
+      element: element,
+      action: action,
+    })
+  }
+
+  executeLinkedAction(action) {
+    if (action === 'paintSplash') {
+      // End color change anim
+      this.endAnimation()
+      
+      // Particle effect
+      for (let i = 0; i < 20; i ++) {
+        game.addThing(new PaintParticle(this.elementReference.position, this.elementReference.color))
+      }
+
+      // Sound effect
+      soundmanager.playSound("change")
+    }
+  }
+
   // Reset animation data
   endAnimation() {
+    // Cancel animations for linked things
+    if (this.anim?.linkedAnimations) {
+      const linkedAnimations = this.anim.linkedAnimations
+      this.anim.linkedAnimations = []
+      for (const linkedAnimation of linkedAnimations) {
+        const thing = game.getThings().filter(x => x.elementReference === linkedAnimation.element)?.[0]
+        if (thing) {
+          thing.executeLinkedAction(linkedAnimation.action)
+        }
+      }
+    }
+
     this.anim = {
       position: undefined,
       targetPosition: [0, 0, 0],
@@ -242,6 +286,11 @@ export default class Element extends Thing {
       laserLength: this.anim?.laserLength || 0,
       laserPosition: this.anim?.laserPosition || [0, 0, 0],
       laserDirection: this.anim?.laserDirection || 'south',
+      isDestroyed: false,
+      isFallen: false,
+      color: undefined,
+      paintedObject: null,
+      linkedAnimations: []
     }
   }
 
@@ -283,7 +332,11 @@ export default class Element extends Thing {
     }
 
     // Color
-    let rColor = COLOR_MAP[this.elementReference.color] || [1, 1, 1, 1]
+    let colorType = this.elementReference.color
+    if (this.anim.color) {
+      colorType = this.anim.color
+    }
+    let rColor = COLOR_MAP[colorType] || [1, 1, 1, 1]
     let rColorBase = [...rColor]
     if (this.elementReference.type === 'fan' || this.elementReference.type === 'rotator') {
       rColorBase = [0.4, 0.4, 0.4, 1]
@@ -291,8 +344,10 @@ export default class Element extends Thing {
 
     // Glow
     let rGlow = 0.0
-    if (board.selectedColor !== '' && board.selectedColor === this.elementReference.color) {
-      rGlow = u.map(Math.sin(board.time / 20), -1, 1, 0.2, 0.4)
+    if (board.selectedColor !== '' && board.selectedColor === colorType) {
+      if (['conveyor', 'fan', 'laser', 'rotator'].includes(this.elementReference.type)) {
+        rGlow = u.map(Math.sin(board.time / 20), -1, 1, 0.2, 0.4)
+      }
     }
 
     // Draw the base model
