@@ -16,6 +16,7 @@ import * as doubleZap from './levels/doubleZap.js'
 import * as fanTower from './levels/fanTower.js'
 import * as bridge from './levels/bridge.js'
 import * as paintIntro from './levels/paintIntro.js'
+import * as gridWorld from './levels/gridWorld.js'
 
 const LEVEL_LIST = [
   intro,
@@ -30,8 +31,9 @@ const LEVEL_LIST = [
   twoTowers,
   plinko,
   zapYourProblems,
-  paintIntro,
   doubleZap,
+  paintIntro,
+  gridWorld,
   fanTower,
 ]
 
