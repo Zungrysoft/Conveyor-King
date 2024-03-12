@@ -71,6 +71,7 @@ export default class Board extends Thing {
       purple: {keyCode: "KeyN", name: "N", buttonId: 8, buttonName: "Start", priority: 5},
       orange: {keyCode: "KeyM", name: "M", buttonId: 11, buttonName: "RS", priority: 6},
       white: {keyCode: "Comma", name: ",", buttonId: 10, buttonName: "LS", priority: 7},
+      pink: {keyCode: "Period", name: ".", buttonId: 12, buttonName: "UNBOUND", priority: 8},
     }
     this.controlMap = []
 
@@ -951,8 +952,7 @@ export default class Board extends Thing {
     if (colors.includes('red') && colors.includes('yellow')) { return 'orange' }
     if (colors.includes('blue') && colors.includes('green')) { return 'cyan' }
     if (colors.includes('red') && colors.includes('green')) { return 'yellow' }
-    if (colors.includes('white') && colors.includes('black')) { return 'grey' }
-    if (colors.includes('orange') && colors.includes('black')) { return 'brown' }
+    if (colors.includes('white') && colors.includes('red')) { return 'pink' }
 
     // If no combinations exist, just use the first provided color
     return c1

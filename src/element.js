@@ -30,9 +30,7 @@ export const COLOR_MAP = {
   'purple': [0.6, 0.0, 0.8, 1],
   'orange': [1.0, 0.5, 0.0, 1],
   'white': [1.0, 1.0, 1.0, 1],
-  'black': [0.15, 0.15, 0.15, 1],
-  'grey': [0.6, 0.6, 0.6, 1],
-  'brown': [0.6, 0.4, 0.1, 1],
+  'pink': [1.0, 0.8, 0.8, 1],
 }
 
 export default class Element extends Thing {
