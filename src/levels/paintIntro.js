@@ -42,37 +42,37 @@ export const data = {
             color: 'green',
             direction: 'east',
         },
-        
+
 
         // Upper Conveyor
         {
             type: 'conveyor',
             position: [-2, -1, 2],
-            color: 'yellow',
+            color: 'white',
             direction: 'south',
         },
         {
             type: 'conveyor',
             position: [-1, -1, 2],
-            color: 'yellow',
+            color: 'white',
             direction: 'south',
         },
         {
             type: 'conveyor',
             position: [0, -1, 2],
-            color: 'yellow',
+            color: 'white',
             direction: 'south',
         },
         {
             type: 'conveyor',
             position: [1, -1, 2],
-            color: 'yellow',
+            color: 'white',
             direction: 'south',
         },
         {
             type: 'conveyor',
             position: [2, -1, 2],
-            color: 'yellow',
+            color: 'white',
             direction: 'south',
         },
 
@@ -114,7 +114,7 @@ export const data = {
             position: [2, -1, 3],
             color: 'blue',
         },
-        
+
         // Crate
         {
             type: 'crate',

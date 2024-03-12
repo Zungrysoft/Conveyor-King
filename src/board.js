@@ -71,7 +71,8 @@ export default class Board extends Thing {
       purple: {keyCode: "KeyN", name: "N", buttonId: 8, buttonName: "Start", priority: 5},
       orange: {keyCode: "KeyM", name: "M", buttonId: 11, buttonName: "RS", priority: 6},
       white: {keyCode: "Comma", name: ",", buttonId: 10, buttonName: "LS", priority: 7},
-      pink: {keyCode: "Period", name: ".", buttonId: 12, buttonName: "UNBOUND", priority: 8},
+      brown: {keyCode: "Slash", name: "/", buttonId: 13, buttonName: "UNBOUND", priority: 9},
+      black: {keyCode: "Semicolon", name: ";", buttonId: 14, buttonName: "UNBOUND", priority: 10},
     }
     this.controlMap = []
 
@@ -947,12 +948,33 @@ export default class Board extends Thing {
   mixColors(c1, c2) {
     let colors = [c1, c2]
 
+    // Black plus anything is still black
+    if (colors.includes('black')) { return 'black' }
+
+    // Brown plus anything is still brown
+    if (colors.includes('brown')) { return 'brown' }
+
+    // Mixing primary colors to make secondary colors
     if (colors.includes('blue') && colors.includes('red')) { return 'purple' }
     if (colors.includes('blue') && colors.includes('yellow')) { return 'green' }
     if (colors.includes('red') && colors.includes('yellow')) { return 'orange' }
+
+    // Cyan is a bit of an odd one out
     if (colors.includes('blue') && colors.includes('green')) { return 'cyan' }
-    if (colors.includes('red') && colors.includes('green')) { return 'yellow' }
-    if (colors.includes('white') && colors.includes('red')) { return 'pink' }
+    if (colors.includes('cyan') && colors.includes('orange')) { return 'brown' }
+    if (colors.includes('cyan') && colors.includes('red')) { return 'brown' }
+    if (colors.includes('cyan') && colors.includes('yellow')) { return 'green' }
+    if (colors.includes('cyan') && colors.includes('purple')) { return 'blue' }
+
+    // Mixing opposite colors makes brown
+    if (colors.includes('red') && colors.includes('green')) { return 'brown' }
+    if (colors.includes('yellow') && colors.includes('purple')) { return 'brown' }
+    if (colors.includes('orange') && colors.includes('blue')) { return 'brown' }
+
+    // Mixing secondary colors makes brown
+    if (colors.includes('purple') && colors.includes('green')) { return 'brown' }
+    if (colors.includes('purple') && colors.includes('orange')) { return 'brown' }
+    if (colors.includes('green') && colors.includes('orange')) { return 'brown' }
 
     // If no combinations exist, just use the first provided color
     return c1

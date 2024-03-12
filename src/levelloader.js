@@ -18,6 +18,7 @@ import * as bridge from './levels/bridge.js'
 import * as paintIntro from './levels/paintIntro.js'
 import * as gridWorld from './levels/gridWorld.js'
 import * as paintStacking from './levels/paintStacking.js'
+import * as paintMixing2 from './levels/paintMixing2.js'
 
 const LEVEL_LIST = [
   intro,
@@ -34,6 +35,7 @@ const LEVEL_LIST = [
   zapYourProblems,
   doubleZap,
   paintIntro,
+  paintMixing2,
   paintStacking,
   gridWorld,
   fanTower,
