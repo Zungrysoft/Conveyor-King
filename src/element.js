@@ -32,6 +32,7 @@ export const COLOR_MAP = {
   'white': [1.0, 1.0, 1.0, 1],
   'black': [0.15, 0.15, 0.15, 1],
   'grey': [0.6, 0.6, 0.6, 1],
+  'brown': [0.6, 0.4, 0.1, 1],
 }
 
 export default class Element extends Thing {
@@ -241,7 +242,7 @@ export default class Element extends Thing {
     if (action === 'paintSplash') {
       // End color change anim
       this.endAnimation()
-      
+
       // Particle effect
       for (let i = 0; i < 20; i ++) {
         game.addThing(new PaintParticle(this.elementReference.position, this.elementReference.color))

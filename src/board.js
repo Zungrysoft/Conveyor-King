@@ -818,7 +818,7 @@ export default class Board extends Thing {
             let belowDistanceOffset = 0
             if (this.isConsumable(element) && this.isPartial(this.state.elements[below])) {
               belowDistanceOffset = 1
-            }            
+            }
 
             // If on top of a chute, destroy self
             if (this.state.elements[below].type === 'chute') {
@@ -952,6 +952,7 @@ export default class Board extends Thing {
     if (colors.includes('blue') && colors.includes('green')) { return 'cyan' }
     if (colors.includes('red') && colors.includes('green')) { return 'yellow' }
     if (colors.includes('white') && colors.includes('black')) { return 'grey' }
+    if (colors.includes('orange') && colors.includes('black')) { return 'brown' }
 
     // If no combinations exist, just use the first provided color
     return c1

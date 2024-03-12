@@ -17,11 +17,11 @@ export default class PaintParticle extends Thing {
   randomVelocity() {
     const theta = 2 * Math.PI * Math.random()
     const phi = Math.acos(2 * Math.random() - 1)
-  
+
     const x = Math.sin(phi) * Math.cos(theta)
     const y = Math.sin(phi) * Math.sin(theta)
     const z = Math.cos(phi)
-  
+
     return vec3.scale([x, y, z], u.map(Math.random(), 0, 1, 0.01, 0.2))
   }
 
